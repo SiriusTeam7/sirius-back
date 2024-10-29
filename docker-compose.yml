@@ -1,0 +1,10 @@
+services:
+  sirius-back:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: python manage.py runserver 0.0.0.0:9000
+    ports:
+      - 9000:9000
+    volumes:
+      - .:/usr/src/app

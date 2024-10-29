@@ -1,0 +1,4 @@
+-r common.txt
+black==24.10.0
+ipdb==0.13.13
+isort==5.13.2
