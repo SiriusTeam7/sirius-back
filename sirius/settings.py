@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -126,6 +127,13 @@ USE_I18N = True
 USE_TZ = True
 
 CHALLENGE_LEVEL_CHOICES = [(level, str(level)) for level in range(1, 8)]
+
+LLM_PROVIDER = "openai"
+LLM_MODEL = "gpt-4o-mini"
+LLM_MAX_TOKENS = 1000
+
+OPENAI_PROVIDER = "openai"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 
 # Static files (CSS, JavaScript, Images)
