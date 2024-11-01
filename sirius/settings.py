@@ -113,6 +113,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+CHALLENGE_LEVEL_CHOICES = [(level, str(level)) for level in range(1, 8)]
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
