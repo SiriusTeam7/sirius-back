@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from core.views import PromptTemplateView, AddCourseToStudentView
+from core.views import *
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,4 +28,5 @@ urlpatterns = [
         AddCourseToStudentView.as_view(),
         name="add-course-to-student",
     ),
+    path("api/get-challenge/", GenerateChallengeView.as_view(), name="get-challenge"),
 ]
