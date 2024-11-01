@@ -17,7 +17,9 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+from core.views import PromptTemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/prompts/", PromptTemplateView.as_view(), name="prompt-templates"),
 ]
