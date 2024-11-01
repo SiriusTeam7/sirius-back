@@ -46,5 +46,5 @@ class StudentProgress(models.Model):
     course_progress = models.PositiveSmallIntegerField(default=0)
     course_completed = models.BooleanField(default=False)
     last_challenge_level = models.PositiveSmallIntegerField(
-        choices=settings.CHALLENGE_LEVEL_CHOICES
+        choices=settings.CHALLENGE_LEVEL_CHOICES, default=1
     )

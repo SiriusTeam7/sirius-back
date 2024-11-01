@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 
 from core.models import Challenge, Course, PromptTemplate, Student, StudentProgress
 
@@ -18,8 +19,19 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ("title", "created_at", "updated_at")
 
 
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["courses"].required = False
+        self.fields["challenges"].required = False
+
+
 class StudentAdmin(admin.ModelAdmin):
-    model = Student
+    form = StudentForm
     list_display = ("name", "created_at", "updated_at")
 
 
