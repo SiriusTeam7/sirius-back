@@ -16,7 +16,9 @@ class PromptTemplate(models.Model):
 
 class Challenge(models.Model):
     text = models.TextField()
-    level = models.PositiveSmallIntegerField(choices=settings.CHALLENGE_LEVEL_CHOICES)
+    level = models.PositiveSmallIntegerField(
+        choices=settings.CHALLENGE_LEVEL_CHOICES, default=1
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -25,6 +27,7 @@ class Course(models.Model):
     title = models.CharField(max_length=240)
     description = models.TextField(null=True, blank=True)
     transcript = models.TextField(null=True, blank=True)
+    challenges = models.ManyToManyField(Challenge, related_name="courses")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -13,11 +13,8 @@ class LLMService:
             return OpenAIProvider()
         raise ValueError("LLM API Provider not supported.")
 
-    def generate_challenge(self, prompt):
-        """
-        Generates text using the configured LLM provider.
-        """
-        return self.provider.generate_challenge(prompt, self.model, self.max_tokens)
+    def generate_text(self, prompt):
+        return self.provider.generate_text(prompt, self.model, self.max_tokens)
 
 
 class OpenAIProvider:
@@ -25,7 +22,7 @@ class OpenAIProvider:
         openai.api_key = settings.OPENAI_API_KEY
         self.client = openai.OpenAI()
 
-    def generate_challenge(self, prompt, model, max_tokens):
+    def generate_text(self, prompt, model, max_tokens):
         try:
             response = self.client.chat.completions.create(
                 model=model,
