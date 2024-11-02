@@ -20,7 +20,7 @@ jobs:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DO_ACCESS_TOKEN }
+          token: ${{ secrets.DO_ACCESS_TOKEN }}
 
       - name: Build container image
         run: docker build -t ${{ env.APP_IMAGE }} .
