@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sirius-main--web
+  labels:
+    app: sirius-main
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sirius-main--web-pod
+  template:
+    metadata:
+      labels:
+        app: sirius-main--web-pod
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: sirius-main--web-container
+        image: ${IMAGE_NAME}
+        command: ["gunicorn", "-c", "gunicorn.conf.py", "sirius.wsgi"]
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+        envFrom:
+        - configMapRef:
+             name: sirius-main--env
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sirius-main--web
+  labels:
+    app: sirius-main
+spec:
+  type: NodePort
+  selector:
+    app: sirius-main--web-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+  type: NodePort

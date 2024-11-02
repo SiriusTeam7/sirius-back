@@ -1,0 +1,75 @@
+name: Deploy to DigitalOcean Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  APP_IMAGE: ${{ secrets.DOCR_REGISTRY }}/sirius:main-$(echo $GITHUB_SHA | head -c7)
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_ACCESS_TOKEN }
+
+      - name: Build container image
+        run: docker build -t ${{ env.APP_IMAGE }} .
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push ${{ env.APP_IMAGE }}
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-22.04
+    needs: [build]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      
+      - name: Create kubefile folder
+        run: mkdir deploy
+      
+      - name: Copy deployment file
+        run: cp k8s/prod/* deploy/
+      
+      - name: Create k8s deployment file
+        uses: fhgbaguidi/envsubst-action@v1.0.0
+        with:
+          input-file: k8s/prod/k8s.yaml
+          output-file: deploy/k8s.yaml
+        env:
+          IMAGE_NAME: ${{ env.APP_IMAGE }}
+
+      - name: Repace env variables in configmap
+        uses: fhgbaguidi/envsubst-action@v1.0.0
+        with:
+          input-file: k8s/configmap.yaml
+          output-file: deploy/configmap.yaml
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ENVIRONMENT: "Production"
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
+
+      - name: Deploy to DigitalOcean Kubernetes
+        run: kubectl apply -f deploy/
+
+      - name: Verify deployment
+        run: kubectl rollout status deployment/sirius
