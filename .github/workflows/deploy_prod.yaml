@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  APP_IMAGE: ${{ secrets.DOCR_REGISTRY }}/sirius:main-$(echo $GITHUB_SHA | head -c7)
+  APP_IMAGE: ${{ secrets.DOCR_REGISTRY }}/sirius:main-${{ github.sha }}
 
 jobs:
   build:
@@ -69,6 +69,7 @@ jobs:
           ENVIRONMENT: "Production"
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DJANGO_CONFIGURATION: "Production"
 
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
