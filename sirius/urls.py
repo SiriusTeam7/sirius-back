@@ -29,4 +29,5 @@ urlpatterns = [
         name="add-course-to-student",
     ),
     path("api/get-challenge/", GenerateChallengeView.as_view(), name="get-challenge"),
+    path("api/get-feedback/", GenerateFeedbackView.as_view(), name="get-feedback"),
 ]

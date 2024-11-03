@@ -2,7 +2,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.api.serializers import PromptTemplateSerializer, StudentCourseSerializer
+from core.api.serializers import (
+    PromptTemplateSerializer,
+    StudentCourseSerializer,
+    StudentChallengeSerializer,
+)
 from core.models import PromptTemplate
 from core.services.challenge import ChallengeService
 
@@ -38,3 +42,43 @@ class GenerateChallengeView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         return Response({"challenge": challenge_response}, status=status.HTTP_200_OK)
+
+
+class GenerateFeedbackView(APIView):
+    def post(self, request):
+        serializer = StudentChallengeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        student_id = serializer.validated_data["student_id"]
+        challenge_id = serializer.validated_data["challenge_id"]
+        answer_type = serializer.validated_data["answer_type"]
+        answer_text = serializer.validated_data["answer_text"]
+        answer_audio = serializer.validated_data["answer_audio"]
+        student_answer = None
+
+        if answer_type == "text":
+            student_answer = answer_text
+            if student_answer is None:
+                return Response(
+                    {"error": "Answer text is required."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        elif answer_type == "audio":
+            # TODO: enable for answer audio
+            # student_answer = answer_audio
+            student_answer = answer_text
+            if student_answer is None:
+                return Response(
+                    {"error": "Answer audio is required."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        challenge_response = ChallengeService().get_feedback(
+            student_id, challenge_id, answer_type, student_answer
+        )
+        if challenge_response is None:
+            return Response(
+                {"error": "Feedback coudn't be generated."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+        return Response({"feedback": challenge_response}, status=status.HTTP_200_OK)

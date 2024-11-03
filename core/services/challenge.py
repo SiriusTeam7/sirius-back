@@ -19,9 +19,9 @@ class ChallengeService:
         prompt += f"\nNivel del reto: {student_progress.last_challenge_level}"
         return prompt
 
-    def build_feedback_prompt(self, *args, **kwargs):
-        prompt = "Build feedback prompt here."
-        return prompt
+    def generate_challenge(self, student_id, course_id):
+        prompt = self.build_challenge_prompt(student_id, course_id)
+        return self.llm_service.generate_text(prompt)
 
     def get_challenge(self, student_id, course_id):
         try:
@@ -46,10 +46,13 @@ class ChallengeService:
             print(e)
             return None
 
-    def generate_challenge(self, student_id, course_id):
-        prompt = self.build_challenge_prompt(student_id, course_id)
-        return self.llm_service.generate_text(prompt)
+    def build_feedback_prompt(self, *args, **kwargs):
+        prompt = "Build feedback prompt here."
+        return prompt
 
     def generate_feedback(self, *args, **kwargs):
         prompt = self.build_feedback_prompt(*args, **kwargs)
         return self.llm_service.generate_text(prompt)
+
+    def get_feedback(self, student_id, challenge_id, answer_type, student_answer):
+        return "Get feedback service started"
