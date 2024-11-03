@@ -39,7 +39,8 @@ class Common(Configuration):
     # SECURITY WARNING: keep the secret key used in production secret!
     SECRET_KEY = values.SecretValue() if values.SecretValue() == "None" else "ABC"
 
-    ALLOWED_HOSTS = []
+    # TODO: fix this config
+    ALLOWED_HOSTS = ["*"]
 
     # Application definition
 
