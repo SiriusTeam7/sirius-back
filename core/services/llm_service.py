@@ -6,6 +6,7 @@ class LLMService:
     def __init__(self, provider=settings.LLM_PROVIDER):
         self.provider = self._get_provider(provider)
         self.model = settings.LLM_MODEL
+        self.model_speech_to_text = settings.LLM_MODEL_SPEECH_TO_TEXT
         self.max_tokens = settings.LLM_MAX_TOKENS
 
     def _get_provider(self, provider):
@@ -15,6 +16,9 @@ class LLMService:
 
     def generate_text(self, prompt):
         return self.provider.generate_text(prompt, self.model, self.max_tokens)
+
+    def get_text_from_audio(self):
+        return self.provider.get_text_from_audio(self.model_speech_to_text)
 
 
 class OpenAIProvider:
@@ -31,5 +35,17 @@ class OpenAIProvider:
             )
             return response.choices[0].message.content
         except Exception as e:
-            print(f"Error requesting OpenAI: {e} ")
+            print(f"Error requesting {model} OpenAI: {e} ")
+            return None
+
+    def get_text_from_audio(self, model, audio_file_path):
+        try:
+            audio_file = open(audio_file_path, "rb")
+            transcription = self.client.audio.transcriptions.create(
+                model=model,
+                file=audio_file,
+            )
+            return transcription.text
+        except Exception as e:
+            print(f"Error requesting {model} OpenAI: {e} ")
             return None

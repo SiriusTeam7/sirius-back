@@ -145,6 +145,7 @@ class Common(Configuration):
     LLM_PROVIDER = "openai"
     LLM_MODEL = "gpt-4o-mini"
     LLM_MAX_TOKENS = 1000
+    LLM_MODEL_SPEECH_TO_TEXT = "whisper-1"
 
     OPENAI_PROVIDER = "openai"
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
