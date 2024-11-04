@@ -10,16 +10,19 @@ class ChallengeService:
         self.llm_service = LLMService()
 
     def build_challenge_prompt(self, student_id, course_id):
-        student_progress, _ = StudentProgress.objects.get_or_create(
-            student=student_id, course=course_id
-        )
+        # TODO: enable student progress
+        # student = Student.objects.get(id=student_id)
+        # course = Course.objects.get(id=course_id)
+        # student_progress, _ = StudentProgress.objects.get_or_create(
+        #     student=student_id, course=course_id
+        # )
         prompt_challenge_template = PromptTemplate.objects.get(type="CH")
         prompt = prompt_challenge_template.text
         prompt += (
             f"\nTranscripción del curso:  {Course.objects.get(id=course_id).transcript}"
         )
-        prompt += f"\nProgreso del estudiante: {student_progress.course_progress}"
-        prompt += f"\nNivel del reto: {student_progress.last_challenge_level}"
+        # prompt += f"\nProgreso del estudiante: {student_progress.course_progress}"
+        # prompt += f"\nNivel del reto: {student_progress.last_challenge_level}"
         return prompt
 
     def generate_challenge(self, student_id, course_id):
@@ -45,7 +48,7 @@ class ChallengeService:
                     text=generated_challenge, course=course
                 )
 
-            return new_challenge
+            return new_challenge.text
         except Exception as e:
             print(e)
             return None
