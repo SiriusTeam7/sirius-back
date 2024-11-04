@@ -13,6 +13,9 @@ class PromptTemplate(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.type} - {self.id}"
+
 
 class Challenge(models.Model):
     text = models.TextField()
@@ -21,6 +24,9 @@ class Challenge(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.level} - {self.text[:50]}"
 
 
 class Course(models.Model):
@@ -31,6 +37,9 @@ class Course(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.title} - {self.id}"
+
 
 class Student(models.Model):
     name = models.CharField(max_length=100)
@@ -39,6 +48,9 @@ class Student(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.id} - {self.name}"
 
 
 class StudentProgress(models.Model):
@@ -51,3 +63,6 @@ class StudentProgress(models.Model):
     last_challenge_level = models.PositiveSmallIntegerField(
         choices=settings.CHALLENGE_LEVEL_CHOICES, default=1
     )
+
+    def __str__(self):
+        return f"{self.student.name} - {self.course.title}"
