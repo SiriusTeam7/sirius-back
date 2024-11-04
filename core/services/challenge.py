@@ -1,7 +1,8 @@
-from core.services.llm_service import LLMService
-from core.models import Challenge, Course, Student, StudentProgress, PromptTemplate
-
 from django.conf import settings
+
+from core.models import Challenge, Course, PromptTemplate, Student, StudentProgress
+from core.services.llm_service import LLMService
+from core.services.utils import delete_temp_file
 
 
 class ChallengeService:
@@ -61,9 +62,12 @@ class ChallengeService:
 
     def get_feedback(self, student_id, challenge_id, answer_type, student_answer):
         try:
+            if answer_type == settings.ANSWER_TYPE_AUDIO:
+                student_answer = self.llm_service.get_text_from_audio(student_answer)
             challenge = Challenge.objects.get(id=challenge_id)
             feedback = self.generate_feedback(challenge.text, student_answer)
             Student.objects.get(id=student_id).challenges.add(challenge)
+            delete_temp_file(student_answer)
             return feedback
         except Exception as e:
             print(e)

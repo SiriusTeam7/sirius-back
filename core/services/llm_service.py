@@ -1,5 +1,5 @@
-from django.conf import settings
 import openai
+from django.conf import settings
 
 
 class LLMService:
@@ -17,8 +17,10 @@ class LLMService:
     def generate_text(self, prompt):
         return self.provider.generate_text(prompt, self.model, self.max_tokens)
 
-    def get_text_from_audio(self):
-        return self.provider.get_text_from_audio(self.model_speech_to_text)
+    def get_text_from_audio(self, audio_file_path):
+        return self.provider.get_text_from_audio(
+            self.model_speech_to_text, audio_file_path
+        )
 
 
 class OpenAIProvider:

@@ -1,3 +1,7 @@
+import os
+import tempfile
+import uuid
+
 from rest_framework import serializers
 
 from core.models import Challenge, Course, PromptTemplate, Student
@@ -42,9 +46,7 @@ class StudentChallengeSerializer(serializers.Serializer):
     challenge_id = serializers.IntegerField()
     answer_type = serializers.ChoiceField(choices=["text", "audio"])
     answer_text = serializers.CharField(required=False, default=None)
-    # TODO: enable for audio
-    # answer_audio = serializers.FileField(required=False)
-    answer_audio = serializers.CharField(required=False, default=None)
+    answer_audio = serializers.FileField(required=False, default=None)
 
     def validate(self, data):
         try:
@@ -56,6 +58,21 @@ class StudentChallengeSerializer(serializers.Serializer):
             data["challenge"] = Challenge.objects.get(id=data["challenge_id"])
         except Challenge.DoesNotExist:
             raise serializers.ValidationError("Challenge does not exist.")
+
+        try:
+            audio_file = data["answer_audio"]
+            if audio_file and not audio_file.content_type.startswith("audio"):
+                raise serializers.ValidationError("File is not an audio.")
+
+            temp_dir = tempfile.gettempdir()
+            temp_file_name = f"{str(uuid.uuid4())}{audio_file.name}"
+            temp_file_path = os.path.join(temp_dir, temp_file_name)
+            with open(temp_file_path, "wb") as temp_file:
+                for chunk in audio_file.chunks():
+                    temp_file.write(chunk)
+            data["answer_audio"] = temp_file_path
+        except Exception as e:
+            raise serializers.ValidationError("Error saving audio file.")
 
         return data
 

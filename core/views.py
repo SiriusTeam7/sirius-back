@@ -1,11 +1,14 @@
+import os
+
+from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.api.serializers import (
     PromptTemplateSerializer,
-    StudentCourseSerializer,
     StudentChallengeSerializer,
+    StudentCourseSerializer,
 )
 from core.models import PromptTemplate
 from core.services.challenge import ChallengeService
@@ -52,10 +55,11 @@ class GenerateFeedbackView(APIView):
         challenge_id = serializer.validated_data["challenge_id"]
         answer_type = serializer.validated_data["answer_type"]
         answer_text = serializer.validated_data["answer_text"]
-        answer_audio = serializer.validated_data["answer_audio"]
+        answer_audio_path = serializer.validated_data["answer_audio"]
+
         student_answer = None
 
-        if answer_type == "text":
+        if answer_type == settings.ANSWER_TYPE_TEXT:
             student_answer = answer_text
             if student_answer is None:
                 return Response(
@@ -63,10 +67,13 @@ class GenerateFeedbackView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        elif answer_type == "audio":
-            # TODO: enable for answer audio
-            # student_answer = answer_audio
-            student_answer = answer_text
+        elif answer_type == settings.ANSWER_TYPE_AUDIO:
+            if not os.path.exists(answer_audio_path):
+                return Response(
+                    {"error": "Answer audio file does not exist."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            student_answer = answer_audio_path
             if student_answer is None:
                 return Response(
                     {"error": "Answer audio is required."},

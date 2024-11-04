@@ -140,6 +140,9 @@ class Common(Configuration):
 
     DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+    ANSWER_TYPE_AUDIO = "audio"
+    ANSWER_TYPE_TEXT = "text"
+
     CHALLENGE_LEVEL_CHOICES = [(level, str(level)) for level in range(1, 8)]
 
     LLM_PROVIDER = "openai"
