@@ -1,6 +1,8 @@
 from core.services.llm_service import LLMService
 from core.models import Challenge, Course, Student, StudentProgress, PromptTemplate
 
+from django.conf import settings
+
 
 class ChallengeService:
     def __init__(self):
@@ -46,13 +48,23 @@ class ChallengeService:
             print(e)
             return None
 
-    def build_feedback_prompt(self, *args, **kwargs):
-        prompt = "Build feedback prompt here."
+    def build_feedback_prompt(self, challenge_text, student_answer):
+        prompt_challenge_template = PromptTemplate.objects.get(type="FE")
+        prompt = prompt_challenge_template.text
+        prompt += f"\nReto enviado al estudiante: {challenge_text}"
+        prompt += f"\nRespuesta del estudiante: {student_answer}"
         return prompt
 
-    def generate_feedback(self, *args, **kwargs):
-        prompt = self.build_feedback_prompt(*args, **kwargs)
+    def generate_feedback(self, challente_text, student_answer):
+        prompt = self.build_feedback_prompt(challente_text, student_answer)
         return self.llm_service.generate_text(prompt)
 
     def get_feedback(self, student_id, challenge_id, answer_type, student_answer):
-        return "Get feedback service started"
+        try:
+            challenge = Challenge.objects.get(id=challenge_id)
+            feedback = self.generate_feedback(challenge.text, student_answer)
+            Student.objects.get(id=student_id).challenges.add(challenge)
+            return feedback
+        except Exception as e:
+            print(e)
+            return None
