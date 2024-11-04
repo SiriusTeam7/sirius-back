@@ -28,10 +28,10 @@ class ChallengeService:
 
     def get_challenge(self, student_id, course_id):
         try:
+            course = Course.objects.get(id=course_id)
             challenges_made = Student.objects.get(id=student_id).challenges.all()
             new_challenge = (
-                Course.objects.get(id=course_id)
-                .challenges.exclude(id__in=challenges_made)
+                course.challenges.exclude(id__in=challenges_made)
                 .order_by("level")
                 .first()
             )
@@ -41,8 +41,9 @@ class ChallengeService:
             generated_challenge = self.generate_challenge(student_id, course_id)
 
             if generated_challenge:
-                new_challenge = Challenge.objects.create(text=generated_challenge)
-                Course.objects.get(id=course_id).challenges.add(new_challenge)
+                new_challenge = Challenge.objects.create(
+                    text=generated_challenge, course=course
+                )
 
             return new_challenge
         except Exception as e:

@@ -17,28 +17,30 @@ class PromptTemplate(models.Model):
         return f"{self.type} - {self.id}"
 
 
+class Course(models.Model):
+    title = models.CharField(max_length=240)
+    description = models.TextField(null=True, blank=True)
+    transcript = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.id}"
+
+
 class Challenge(models.Model):
     text = models.TextField()
     level = models.PositiveSmallIntegerField(
         choices=settings.CHALLENGE_LEVEL_CHOICES, default=1
+    )
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="challenges", null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.level} - {self.text[:50]}"
-
-
-class Course(models.Model):
-    title = models.CharField(max_length=240)
-    description = models.TextField(null=True, blank=True)
-    transcript = models.TextField(null=True, blank=True)
-    challenges = models.ManyToManyField(Challenge, related_name="courses")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.title} - {self.id}"
 
 
 class Student(models.Model):
