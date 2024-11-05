@@ -13,6 +13,14 @@ class PromptTemplateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ChallengeSerializer(serializers.ModelSerializer):
+    course_title = serializers.CharField(source="course.title")
+
+    class Meta:
+        model = Challenge
+        fields = ["id", "course_id", "course_title", "text"]
+
+
 class StudentCourseSerializer(serializers.ModelSerializer):
     student_id = serializers.IntegerField()
     course_id = serializers.IntegerField()

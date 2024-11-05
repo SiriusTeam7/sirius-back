@@ -6,11 +6,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.api.serializers import (
+    ChallengeSerializer,
     PromptTemplateSerializer,
     StudentChallengeSerializer,
     StudentCourseSerializer,
 )
-from core.models import PromptTemplate
+from core.models import Challenge, PromptTemplate
 from core.services.challenge import ChallengeService
 
 
@@ -18,6 +19,13 @@ class PromptTemplateView(APIView):
     def get(self, request):
         prompt_templates = PromptTemplate.objects.all()
         serializer = PromptTemplateSerializer(prompt_templates, many=True)
+        return Response(serializer.data)
+
+
+class ChallengeTemplateView(APIView):
+    def get(self, request):
+        challenges = Challenge.objects.all().order_by("?")[:20]
+        serializer = ChallengeSerializer(challenges, many=True)
         return Response(serializer.data)
 
 

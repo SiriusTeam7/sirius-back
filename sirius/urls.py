@@ -23,6 +23,7 @@ from core.views import *
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/prompts/", PromptTemplateView.as_view(), name="prompt-templates"),
+    path("api/challenges/", ChallengeTemplateView.as_view(), name="challenges"),
     path(
         "api/add-course-to-student/",
         AddCourseToStudentView.as_view(),
