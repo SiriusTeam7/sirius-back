@@ -24,7 +24,7 @@ class PromptTemplateView(APIView):
 
 class ChallengeTemplateView(APIView):
     def get(self, request):
-        challenges = Challenge.objects.all().order_by("?")[:20]
+        challenges = Challenge.objects.all()[:20]
         serializer = ChallengeSerializer(challenges, many=True)
         return Response(serializer.data)
 
