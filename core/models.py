@@ -21,6 +21,7 @@ class Course(models.Model):
     title = models.CharField(max_length=240)
     description = models.TextField(null=True, blank=True)
     transcript = models.TextField(null=True, blank=True)
+    color = models.CharField(max_length=7, default="#000000")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
