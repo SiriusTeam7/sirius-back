@@ -2,6 +2,7 @@ import os
 import tempfile
 import uuid
 
+from django.conf import settings
 from rest_framework import serializers
 
 from core.models import Challenge, Course, PromptTemplate, Student
@@ -67,20 +68,36 @@ class StudentChallengeSerializer(serializers.Serializer):
         except Challenge.DoesNotExist:
             raise serializers.ValidationError("Challenge does not exist.")
 
+        error_message = "Error saving audio file."
         try:
             audio_file = data["answer_audio"]
-            if audio_file and not audio_file.content_type.startswith("audio"):
-                raise serializers.ValidationError("File is not an audio.")
 
-            temp_dir = tempfile.gettempdir()
-            temp_file_name = f"{str(uuid.uuid4())}{audio_file.name}"
-            temp_file_path = os.path.join(temp_dir, temp_file_name)
-            with open(temp_file_path, "wb") as temp_file:
-                for chunk in audio_file.chunks():
-                    temp_file.write(chunk)
-            data["answer_audio"] = temp_file_path
+            if data["answer_type"] == settings.ANSWER_TYPE_TEXT:
+                if not data["answer_text"]:
+                    error_message = "Text answer is required."
+                    raise serializers.ValidationError(error_message)
+                elif audio_file:
+                    audio_file = None
+
+            elif data["answer_type"] == settings.ANSWER_TYPE_AUDIO:
+
+                if not audio_file:
+                    error_message = "No audio file provided."
+                    raise serializers.ValidationError(error_message)
+
+                if audio_file and not audio_file.content_type.startswith("audio"):
+                    error_message = "File is not an audio."
+                    raise serializers.ValidationError(error_message)
+
+                temp_dir = tempfile.gettempdir()
+                temp_file_name = f"{str(uuid.uuid4())}{audio_file.name}"
+                temp_file_path = os.path.join(temp_dir, temp_file_name)
+                with open(temp_file_path, "wb") as temp_file:
+                    for chunk in audio_file.chunks():
+                        temp_file.write(chunk)
+                data["answer_audio"] = temp_file_path
         except Exception as e:
-            raise serializers.ValidationError("Error saving audio file.")
+            raise serializers.ValidationError(error_message)
 
         return data
 
