@@ -53,6 +53,7 @@ class Common(Configuration):
         "django.contrib.staticfiles",
         "rest_framework",
         "rest_framework.authtoken",
+        "corsheaders",
         "core",
     ]
 
@@ -67,6 +68,7 @@ class Common(Configuration):
     }
 
     MIDDLEWARE = [
+        "corsheaders.middleware.CorsMiddleware",
         "django.middleware.security.SecurityMiddleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
         "django.middleware.common.CommonMiddleware",
@@ -139,6 +141,12 @@ class Common(Configuration):
     # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
     DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",
+        "https://aprendeconsirius.com",
+    ]
+    CORS_ALLOW_CREDENTIALS = True
 
     ANSWER_TYPE_AUDIO = "audio"
     ANSWER_TYPE_TEXT = "text"
