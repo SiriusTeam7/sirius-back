@@ -42,6 +42,13 @@ class Common(Configuration):
     # TODO: fix this config
     ALLOWED_HOSTS = ["*"]
 
+    CSRF_COOKIE_SAMESITE = "None"
+    CSRF_TRUSTED_ORIGINS = [
+        "https://hack.siriusapi.online",
+        "https://aprendeconsirius.com",
+        "https://www.aprendeconsirius.com",
+    ]
+
     # Application definition
 
     INSTALLED_APPS = [
