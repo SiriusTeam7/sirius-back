@@ -60,19 +60,22 @@ class ChallengeService:
         prompt += f"\nRespuesta del estudiante: {student_answer}"
         return prompt
 
-    def generate_feedback(self, challente_text, student_answer):
-        prompt = self.build_feedback_prompt(challente_text, student_answer)
+    def generate_feedback(self, challenge_text, student_answer):
+        prompt = self.build_feedback_prompt(challenge_text, student_answer)
         return self.llm_service.generate_text(prompt)
 
     def get_feedback(self, student_id, challenge_id, answer_type, student_answer):
         try:
-            if answer_type == settings.ANSWER_TYPE_AUDIO:
-                student_answer = self.llm_service.get_text_from_audio(student_answer)
+            file_path = (
+                student_answer if answer_type == settings.ANSWER_TYPE_AUDIO else None
+            )
+            if file_path:
+                student_answer = self.llm_service.get_text_from_audio(file_path)
             challenge = Challenge.objects.get(id=challenge_id)
             feedback = self.generate_feedback(challenge.text, student_answer)
             Student.objects.get(id=student_id).challenges.add(challenge)
-            delete_temp_file(student_answer)
+            delete_temp_file(file_path) if file_path else None
             return feedback
         except Exception as e:
             print(e)
-            return None
+        return None
