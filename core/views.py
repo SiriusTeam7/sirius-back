@@ -49,7 +49,7 @@ class GenerateChallengeView(APIView):
         challenge_response = ChallengeService().get_challenge(student_id, course_id)
         if challenge_response is None:
             return Response(
-                {"error": "Challenge coudn't be generated."},
+                {"error": "Challenge could not be generated."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         return Response({"challenge": challenge_response}, status=status.HTTP_200_OK)
@@ -93,7 +93,7 @@ class GenerateFeedbackView(APIView):
         )
         if challenge_response is None:
             return Response(
-                {"error": "Feedback coudn't be generated."},
+                {"error": "Feedback could not be generated."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         return Response({"feedback": challenge_response}, status=status.HTTP_200_OK)
