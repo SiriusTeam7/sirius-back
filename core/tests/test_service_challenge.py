@@ -26,7 +26,7 @@ class ChallengeServiceTests(TestFactory):
         )
 
         mock_generate_text.assert_called_once_with(
-            f"Template for challenge: \nTranscripción del curso:  {self.course_1.transcript}"
+            f"Template for challenge: \nTranscript:  {self.course_1.transcript}"
         )
         self.assertEqual(result, "Generated challenge text")
 
@@ -69,7 +69,7 @@ class ChallengeServiceTests(TestFactory):
         result = self.service.generate_feedback("Challenge text", "Student answer")
 
         mock_generate_text.assert_called_once_with(
-            "Template for feedback: \nReto enviado al estudiante: Challenge text\nRespuesta del estudiante: Student answer"
+            "Template for feedback: \nChallenge: Challenge text\nAnswer: Student answer"
         )
         self.assertEqual(result, "Generated feedback text")
 
@@ -91,7 +91,7 @@ class ChallengeServiceTests(TestFactory):
 
         mock_get_text_from_audio.assert_called_once_with("path/to/audio")
         mock_generate_text.assert_called_once_with(
-            f"Template for feedback: \nReto enviado al estudiante: {self.challenge_1.text}\nRespuesta del estudiante: Transcribed text"
+            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text"
         )
         mock_delete_temp_file.assert_called_once_with("path/to/audio")
         self.assertEqual(result, "Generated feedback text")
@@ -113,7 +113,7 @@ class ChallengeServiceTests(TestFactory):
 
         mock_get_text_from_audio.assert_not_called()
         mock_generate_text.assert_called_once_with(
-            f"Template for feedback: \nReto enviado al estudiante: {self.challenge_1.text}\nRespuesta del estudiante: Transcribed text"
+            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text"
         )
         mock_delete_temp_file.assert_not_called()
         self.assertEqual(result, "Generated feedback text")

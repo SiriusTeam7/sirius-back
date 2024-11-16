@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from core.models import Challenge, Course, PromptTemplate, Student, StudentProgress
+from core.models import Challenge, Course, PromptTemplate, Student
 from core.services.llm_service import LLMService
 from core.services.utils import delete_temp_file
 
@@ -10,19 +10,12 @@ class ChallengeService:
         self.llm_service = LLMService()
 
     def build_challenge_prompt(self, student_id, course_id):
-        # TODO: enable student progress
-        # student = Student.objects.get(id=student_id)
-        # course = Course.objects.get(id=course_id)
-        # student_progress, _ = StudentProgress.objects.get_or_create(
-        #     student=student_id, course=course_id
-        # )
+        print(
+            f"Building challenge prompt for student {student_id} and course {course_id}"
+        )
         prompt_challenge_template = PromptTemplate.objects.get(type="CH")
         prompt = prompt_challenge_template.text
-        prompt += (
-            f"\nTranscripción del curso:  {Course.objects.get(id=course_id).transcript}"
-        )
-        # prompt += f"\nProgreso del estudiante: {student_progress.course_progress}"
-        # prompt += f"\nNivel del reto: {student_progress.last_challenge_level}"
+        prompt += f"\nTranscript:  {Course.objects.get(id=course_id).transcript}"
         return prompt
 
     def generate_challenge(self, student_id, course_id):
@@ -56,8 +49,8 @@ class ChallengeService:
     def build_feedback_prompt(self, challenge_text, student_answer):
         prompt_challenge_template = PromptTemplate.objects.get(type="FE")
         prompt = prompt_challenge_template.text
-        prompt += f"\nReto enviado al estudiante: {challenge_text}"
-        prompt += f"\nRespuesta del estudiante: {student_answer}"
+        prompt += f"\nChallenge: {challenge_text}"
+        prompt += f"\nAnswer: {student_answer}"
         return prompt
 
     def generate_feedback(self, challenge_text, student_answer):
