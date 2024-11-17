@@ -1,9 +1,12 @@
+import logging
+
 import openai
 from django.conf import settings
 
 
 class LLMService:
     def __init__(self, provider=settings.LLM_PROVIDER):
+        self.logger = logging.getLogger(settings.LOGGER_NAME)
         self.provider = self._get_provider(provider)
         self.model = settings.LLM_MODEL
         self.model_speech_to_text = settings.LLM_MODEL_SPEECH_TO_TEXT
@@ -25,6 +28,7 @@ class LLMService:
 
 class OpenAIProvider:
     def __init__(self):
+        self.logger = logging.getLogger(settings.LOGGER_NAME)
         openai.api_key = settings.OPENAI_API_KEY
         self.client = openai.OpenAI()
 
@@ -37,7 +41,7 @@ class OpenAIProvider:
             )
             return response.choices[0].message.content
         except Exception as e:
-            print(f"Error requesting {model} OpenAI: {e} ")
+            self.logger.warning(f"Error requesting {model} OpenAI: {e} ")
             return None
 
     def get_text_from_audio(self, model, audio_file_path):
@@ -49,5 +53,5 @@ class OpenAIProvider:
             )
             return transcription.text
         except Exception as e:
-            print(f"Error requesting {model} OpenAI: {e} ")
+            self.logger.warning(f"Error requesting {model} OpenAI: {e} ")
             return None

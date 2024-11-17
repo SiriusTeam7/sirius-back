@@ -1,3 +1,4 @@
+import logging
 import os
 import tempfile
 import uuid
@@ -6,6 +7,8 @@ from django.conf import settings
 from rest_framework import serializers
 
 from core.models import Challenge, Course, PromptTemplate, Student
+
+logger = logging.getLogger(settings.LOGGER_NAME)
 
 
 class PromptTemplateSerializer(serializers.ModelSerializer):
@@ -98,7 +101,7 @@ class StudentChallengeSerializer(serializers.Serializer):
                         temp_file.write(chunk)
                 data["answer_audio"] = temp_file_path
         except Exception as e:
-            print(e)
+            logger.warning(e)
             raise serializers.ValidationError(error_message)
 
         return data

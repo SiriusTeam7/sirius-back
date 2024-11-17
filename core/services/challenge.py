@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 
 from core.models import Challenge, Course, PromptTemplate, Student
@@ -7,10 +9,11 @@ from core.services.utils import delete_temp_file
 
 class ChallengeService:
     def __init__(self):
+        self.logger = logging.getLogger(settings.LOGGER_NAME)
         self.llm_service = LLMService()
 
     def build_challenge_prompt(self, student_id, course_id):
-        print(
+        self.logger.info(
             f"Building challenge prompt for student {student_id} and course {course_id}"
         )
         prompt_challenge_template = PromptTemplate.objects.get(type="CH")
@@ -43,7 +46,7 @@ class ChallengeService:
 
             return new_challenge.text
         except Exception as e:
-            print(e)
+            self.logger.warning(e)
             return None
 
     def build_feedback_prompt(self, challenge_text, student_answer):
@@ -70,5 +73,5 @@ class ChallengeService:
             delete_temp_file(file_path) if file_path else None
             return feedback
         except Exception as e:
-            print(e)
+            self.logger.warning(e)
         return None

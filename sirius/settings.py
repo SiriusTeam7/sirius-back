@@ -172,6 +172,30 @@ class Common(Configuration):
 class Development(Common):
     """The development settings."""
 
+    LOGGER_NAME = "sirius"
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "verbose": {
+                "format": "[{asctime} | {levelname}] [{module}]: {message}",
+                "style": "{",
+            },
+        },
+        "handlers": {
+            "console": {
+                "level": "INFO",
+                "class": "logging.StreamHandler",
+                "formatter": "verbose",
+                "stream": sys.stdout,
+            },
+        },
+        "loggers": {
+            "sirius": {"handlers": ["console"], "level": "INFO"},
+            "django": {"handlers": ["console"], "level": "INFO"},
+        },
+    }
+
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
 
