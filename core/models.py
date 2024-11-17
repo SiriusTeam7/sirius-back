@@ -71,3 +71,19 @@ class StudentProgress(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.course.title}"
+
+
+class ChallengeStat(models.Model):
+    challenge = models.ForeignKey(
+        Challenge, on_delete=models.CASCADE, related_name="stats"
+    )
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name="challenge_stats"
+    )
+    score = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    skipped = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.student.name} - {self.challenge.name}"
