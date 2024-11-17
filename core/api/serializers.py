@@ -98,6 +98,7 @@ class StudentChallengeSerializer(serializers.Serializer):
                         temp_file.write(chunk)
                 data["answer_audio"] = temp_file_path
         except Exception as e:
+            print(e)
             raise serializers.ValidationError(error_message)
 
         return data
