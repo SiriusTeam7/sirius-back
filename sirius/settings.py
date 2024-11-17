@@ -15,7 +15,9 @@ import sys
 from pathlib import Path
 
 import dj_database_url
+import sentry_sdk
 from configurations import Configuration, values
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 class Common(Configuration):
@@ -167,6 +169,13 @@ class Common(Configuration):
 
     OPENAI_PROVIDER = "openai"
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+
+    sentry_sdk.init(
+        dsn=os.getenv("SENTRY_DSN", ""),
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+    )
 
 
 class Development(Common):

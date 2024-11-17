@@ -3,4 +3,3 @@ black==24.10.0
 coverage==7.6.7
 ipdb==0.13.13
 isort==5.13.2
-prospector==1.13.2
