@@ -30,6 +30,7 @@ class Course(models.Model):
 
 
 class Challenge(models.Model):
+    name = models.CharField(max_length=240, null=True)
     text = models.TextField()
     level = models.PositiveSmallIntegerField(
         choices=settings.CHALLENGE_LEVEL_CHOICES, default=1
@@ -37,11 +38,12 @@ class Challenge(models.Model):
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name="challenges", null=True
     )
+    estimated_minutes = models.PositiveSmallIntegerField(default=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.level} - {self.text[:50]}"
+        return f"{self.name}"
 
 
 class Student(models.Model):
