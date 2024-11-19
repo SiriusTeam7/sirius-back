@@ -44,11 +44,14 @@ class Common(Configuration):
     # TODO: fix this config
     ALLOWED_HOSTS = ["*"]
 
-    CSRF_COOKIE_SAMESITE = "None"
+    CSRF_COOKIE_SAMESITE = "Lax"
+    CSRF_COOKIE_SECURE = False
     CSRF_TRUSTED_ORIGINS = [
         "https://hack.siriusapi.online",
         "https://aprendeconsirius.com",
         "https://www.aprendeconsirius.com",
+        "http://localhost:9000",
+        "http://127.0.0.1:9000",
     ]
 
     # Application definition
@@ -216,6 +219,9 @@ class Staging(Development):
     DATABASES = {}
     DATABASES["default"] = dj_database_url.config(default=DATABASE_URL)
     DATABASES["default"]["MANAGED"] = True
+
+    CSRF_COOKIE_SAMESITE = "None"
+    CSRF_COOKIE_SECURE = True
 
 
 class Production(Staging):
