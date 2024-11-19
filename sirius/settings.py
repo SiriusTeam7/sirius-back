@@ -161,6 +161,7 @@ class Common(Configuration):
     CORS_ALLOW_CREDENTIALS = True
 
     ANSWER_TYPE_AUDIO = "audio"
+    ANSWER_TYPE_CODE = "code"
     ANSWER_TYPE_TEXT = "text"
 
     CHALLENGE_LEVEL_CHOICES = [(level, str(level)) for level in range(1, 8)]

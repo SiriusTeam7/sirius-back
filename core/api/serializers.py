@@ -57,7 +57,7 @@ class StudentCourseSerializer(serializers.ModelSerializer):
 class StudentChallengeSerializer(serializers.Serializer):
     student_id = serializers.IntegerField()
     challenge_id = serializers.IntegerField()
-    answer_type = serializers.ChoiceField(choices=["text", "audio"])
+    answer_type = serializers.ChoiceField(choices=["audio", "code", "text"])
     answer_text = serializers.CharField(required=False, default=None)
     answer_audio = serializers.FileField(required=False, default=None)
 
@@ -76,9 +76,17 @@ class StudentChallengeSerializer(serializers.Serializer):
         try:
             audio_file = data["answer_audio"]
 
-            if data["answer_type"] == settings.ANSWER_TYPE_TEXT:
+            if (
+                data["answer_type"] == settings.ANSWER_TYPE_TEXT
+                or data["answer_type"] == settings.ANSWER_TYPE_CODE
+            ):
                 if not data["answer_text"]:
-                    error_message = "Text answer is required."
+                    type_answer = (
+                        "text"
+                        if data["answer_type"] == settings.ANSWER_TYPE_TEXT
+                        else "code"
+                    )
+                    error_message = f"{type_answer.capitalize()} answer is required."
                     raise serializers.ValidationError(error_message)
                 elif audio_file:
                     audio_file = None

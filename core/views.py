@@ -67,11 +67,17 @@ class GenerateFeedbackView(APIView):
 
         student_answer = None
 
-        if answer_type == settings.ANSWER_TYPE_TEXT:
+        if (
+            answer_type == settings.ANSWER_TYPE_TEXT
+            or answer_type == settings.ANSWER_TYPE_CODE
+        ):
             student_answer = answer_text
             if student_answer is None:
+                type_answer = (
+                    "text" if answer_type == settings.ANSWER_TYPE_TEXT else "code"
+                )
                 return Response(
-                    {"error": "Answer text is required."},
+                    {"error": f"Answer {type_answer} is required."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 

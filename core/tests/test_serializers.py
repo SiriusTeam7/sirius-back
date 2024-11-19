@@ -58,6 +58,18 @@ class SerializerTests(TestFactory):
         serializer.save()
         self.assertIn(self.challenge_1, self.student_1.challenges.all())
 
+    def test_student_challenge_serializer_valid_code(self):
+        data = {
+            "student_id": self.student_1.id,
+            "challenge_id": self.challenge_1.id,
+            "answer_type": "code",
+            "answer_text": "print(test)",
+        }
+        serializer = StudentChallengeSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        serializer.save()
+        self.assertIn(self.challenge_1, self.student_1.challenges.all())
+
     def test_student_challenge_serializer_valid_audio(self):
         temp_file = SimpleUploadedFile(
             "test_audio.mp3", b"Audio content", content_type="audio/mpeg"
@@ -79,6 +91,16 @@ class SerializerTests(TestFactory):
             "student_id": self.student_1.id,
             "challenge_id": self.challenge_1.id,
             "answer_type": "text",
+        }
+        serializer = StudentChallengeSerializer(data=data)
+        with self.assertRaises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    def test_student_challenge_serializer_invalid_code_missing_answer(self):
+        data = {
+            "student_id": self.student_1.id,
+            "challenge_id": self.challenge_1.id,
+            "answer_type": "code",
         }
         serializer = StudentChallengeSerializer(data=data)
         with self.assertRaises(ValidationError):
