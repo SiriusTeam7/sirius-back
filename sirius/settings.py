@@ -175,6 +175,8 @@ class Common(Configuration):
 
     OPENAI_PROVIDER = "openai"
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_CHALLENGE_SCHEMA = "challenge"
+    OPENAI_FEEDBACK_SCHEMA = "feedback"
 
     sentry_sdk.init(
         dsn=os.getenv("SENTRY_DSN", ""),

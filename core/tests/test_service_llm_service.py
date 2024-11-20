@@ -47,16 +47,39 @@ class OpenAIProviderTests(TestCase):
     @patch("openai.OpenAI")
     def test_generate_text(self, mock_openai_client):
         mock_client_instance = mock_openai_client.return_value
-        mock_client_instance.chat.completions.create.return_value = Mock(
+        mock_client_instance.beta.chat.completions.parse.return_value = Mock(
             choices=[Mock(message=Mock(content="Generated text response"))]
         )
         provider = OpenAIProvider()
         result = provider.generate_text("Hello, world!", "text-davinci-003", 50)
 
-        mock_client_instance.chat.completions.create.assert_called_once_with(
+        mock_client_instance.beta.chat.completions.parse.assert_called_once_with(
             model="text-davinci-003",
             messages=[{"role": "user", "content": "Hello, world!"}],
             max_tokens=50,
+            response_format=OpenAIProvider.MessageOutputSchema,
+        )
+        self.assertEqual(result, "Generated text response")
+
+    @patch("openai.OpenAI")
+    def test_generate_text_new_schema(self, mock_openai_client):
+        mock_client_instance = mock_openai_client.return_value
+        mock_client_instance.beta.chat.completions.parse.return_value = Mock(
+            choices=[Mock(message=Mock(content="Generated text response"))]
+        )
+        provider = OpenAIProvider()
+        result = provider.generate_text(
+            "Hello, world!",
+            "text-davinci-003",
+            50,
+            output_schema=settings.OPENAI_CHALLENGE_SCHEMA,
+        )
+
+        mock_client_instance.beta.chat.completions.parse.assert_called_once_with(
+            model="text-davinci-003",
+            messages=[{"role": "user", "content": "Hello, world!"}],
+            max_tokens=50,
+            response_format=OpenAIProvider.ChallengeOutputSchema,
         )
         self.assertEqual(result, "Generated text response")
 
