@@ -1,18 +1,54 @@
 import os
 
 from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.api.serializers import (
     ChallengeSerializer,
+    LoginSerializer,
     PromptTemplateSerializer,
     StudentChallengeSerializer,
     StudentCourseSerializer,
 )
 from core.models import Challenge, PromptTemplate
 from core.services.challenge import ChallengeService
+
+
+class LoginView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data["username"]
+        password = serializer.validated_data["password"]
+
+        user = authenticate(request, username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                return Response(
+                    {
+                        "message": "Login successful",
+                        "user": {
+                            "student_id": user.student.id,
+                        },
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            return Response(
+                {"error": "Account is inactive"}, status=status.HTTP_403_FORBIDDEN
+            )
+        return Response(
+            {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+        )
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
 
 class PromptTemplateView(APIView):

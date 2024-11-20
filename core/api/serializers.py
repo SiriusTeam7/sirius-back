@@ -11,6 +11,11 @@ from core.models import Challenge, Course, PromptTemplate, Student
 logger = logging.getLogger(settings.LOGGER_NAME)
 
 
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
+
+
 class PromptTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PromptTemplate

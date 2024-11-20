@@ -23,11 +23,15 @@ from core.views import (
     ChallengeTemplateView,
     GenerateChallengeView,
     GenerateFeedbackView,
+    LoginView,
+    LogoutView,
     PromptTemplateView,
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("login/", LoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path("api/prompts/", PromptTemplateView.as_view(), name="prompt-templates"),
     path("api/challenges/", ChallengeTemplateView.as_view(), name="challenges"),
     path(
