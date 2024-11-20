@@ -88,6 +88,8 @@ class Common(Configuration):
         "django.contrib.auth.middleware.AuthenticationMiddleware",
         "django.contrib.messages.middleware.MessageMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
+        # custom middleware
+        "core.middleware.StudentMiddleware",
     ]
 
     ROOT_URLCONF = "sirius.urls"
