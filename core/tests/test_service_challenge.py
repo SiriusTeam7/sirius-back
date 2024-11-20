@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+from django.conf import settings
+
 from core.models import Challenge
 from core.services.challenge import ChallengeService
 from core.tests.factories import TestFactory
@@ -26,7 +28,8 @@ class ChallengeServiceTests(TestFactory):
         )
 
         mock_generate_text.assert_called_once_with(
-            f"Template for challenge: \nTranscript:  {self.course_1.transcript}"
+            f"Template for challenge: \nTranscript:  {self.course_1.transcript}",
+            output_schema=settings.OPENAI_CHALLENGE_SCHEMA,
         )
         self.assertEqual(result, "Generated challenge text")
 
@@ -69,7 +72,8 @@ class ChallengeServiceTests(TestFactory):
         result = self.service.generate_feedback("Challenge text", "Student answer")
 
         mock_generate_text.assert_called_once_with(
-            "Template for feedback: \nChallenge: Challenge text\nAnswer: Student answer"
+            "Template for feedback: \nChallenge: Challenge text\nAnswer: Student answer",
+            output_schema=settings.OPENAI_FEEDBACK_SCHEMA,
         )
         self.assertEqual(result, "Generated feedback text")
 
@@ -91,7 +95,8 @@ class ChallengeServiceTests(TestFactory):
 
         mock_get_text_from_audio.assert_called_once_with("path/to/audio")
         mock_generate_text.assert_called_once_with(
-            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text"
+            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text",
+            output_schema=settings.OPENAI_FEEDBACK_SCHEMA,
         )
         mock_delete_temp_file.assert_called_once_with("path/to/audio")
         self.assertEqual(result, "Generated feedback text")
@@ -113,7 +118,8 @@ class ChallengeServiceTests(TestFactory):
 
         mock_get_text_from_audio.assert_not_called()
         mock_generate_text.assert_called_once_with(
-            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text"
+            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text",
+            output_schema=settings.OPENAI_FEEDBACK_SCHEMA,
         )
         mock_delete_temp_file.assert_not_called()
         self.assertEqual(result, "Generated feedback text")

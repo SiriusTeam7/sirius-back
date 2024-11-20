@@ -23,7 +23,9 @@ class ChallengeService:
 
     def generate_challenge(self, student_id, course_id):
         prompt = self.build_challenge_prompt(student_id, course_id)
-        return self.llm_service.generate_text(prompt)
+        return self.llm_service.generate_text(
+            prompt, output_schema=settings.OPENAI_CHALLENGE_SCHEMA
+        )
 
     def get_challenge(self, student_id, course_id):
         try:
@@ -58,7 +60,9 @@ class ChallengeService:
 
     def generate_feedback(self, challenge_text, student_answer):
         prompt = self.build_feedback_prompt(challenge_text, student_answer)
-        return self.llm_service.generate_text(prompt)
+        return self.llm_service.generate_text(
+            prompt, output_schema=settings.OPENAI_FEEDBACK_SCHEMA
+        )
 
     def get_feedback(self, student_id, challenge_id, answer_type, student_answer):
         try:
