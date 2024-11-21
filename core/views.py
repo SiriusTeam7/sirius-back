@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Count
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,8 +14,9 @@ from core.api.serializers import (
     PromptTemplateSerializer,
     StudentChallengeSerializer,
     StudentCourseSerializer,
+    StudentCourseSummarySerializer,
 )
-from core.models import Challenge, PromptTemplate
+from core.models import Challenge, PromptTemplate, Student
 from core.services.challenge import ChallengeService
 
 
@@ -83,6 +85,21 @@ class AddCourseToStudentView(APIView):
             {"message": "Course added to student successfully."},
             status=status.HTTP_201_CREATED,
         )
+
+
+class CourseSummaryView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        serializer = StudentCourseSummarySerializer(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+        student = serializer.validated_data["student"]
+        data = student.challenges.values("course__id", "course__title").annotate(
+            total_challenges=Count("id")
+        )
+        return Response(data)
 
 
 class GenerateChallengeView(APIView):

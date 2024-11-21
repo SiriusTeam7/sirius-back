@@ -8,6 +8,7 @@ from core.api.serializers import (
     PromptTemplateSerializer,
     StudentChallengeSerializer,
     StudentCourseSerializer,
+    StudentCourseSummarySerializer,
 )
 from core.tests.factories import TestFactory
 
@@ -165,3 +166,13 @@ class SerializerTests(TestFactory):
         serializer = StudentChallengeSerializer(data=data, context={"request": request})
         with self.assertRaises(ValidationError):
             serializer.is_valid(raise_exception=True)
+
+    def test_student_course_summary_serializer_valid(self):
+        request = self.request_factory.get("/")
+        request.student = self.student_1
+        serializer = StudentCourseSummarySerializer(
+            data={}, context={"request": request}
+        )
+        self.assertTrue(serializer.is_valid())
+        saved_student = serializer.save()
+        self.assertEqual(saved_student, self.student_1)

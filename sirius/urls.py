@@ -21,6 +21,7 @@ from django.urls import path
 from core.views import (
     AddCourseToStudentView,
     ChallengeTemplateView,
+    CourseSummaryView,
     GenerateChallengeView,
     GenerateFeedbackView,
     LoginView,
@@ -39,6 +40,7 @@ urlpatterns = [
         AddCourseToStudentView.as_view(),
         name="add-course-to-student",
     ),
+    path("api/courses-summary/", CourseSummaryView.as_view(), name="course-summary"),
     path("api/get-challenge/", GenerateChallengeView.as_view(), name="get-challenge"),
     path("api/get-feedback/", GenerateFeedbackView.as_view(), name="get-feedback"),
 ]

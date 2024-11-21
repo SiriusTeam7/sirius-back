@@ -61,6 +61,25 @@ class StudentCourseSerializer(serializers.ModelSerializer):
         return student
 
 
+class StudentCourseSummarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = []
+
+    def validate(self, data):
+        request = self.context.get("request")
+        if not request or not request.student:
+            raise serializers.ValidationError(
+                "No student associated with this session."
+            )
+        data["student"] = request.student
+        return data
+
+    def save(self):
+        student = self.validated_data["student"]
+        return student
+
+
 class StudentChallengeSerializer(serializers.Serializer):
     challenge_id = serializers.IntegerField()
     answer_type = serializers.ChoiceField(choices=["audio", "code", "text"])

@@ -116,3 +116,51 @@ class APITests(APITestCase, TestFactory):
         response = self.client.post(url, data)
         mock_get_feedback.assert_not_called()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_course_summary_with_no_courses(self):
+        url = reverse("course-summary")
+        self.client.login(username="user_t1", password="pwd1")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(
+            response.data,
+            [
+                {
+                    "course__id": self.course1.id,
+                    "course__title": self.course1.title,
+                    "total_challenges": 2,
+                },
+                {
+                    "course__id": self.course2.id,
+                    "course__title": self.course2.title,
+                    "total_challenges": 1,
+                },
+            ],
+        )
+
+    def test_course_summary_with_no_courses(self):
+        self.student_1.challenges.add(self.challenge_1)
+        self.student_1.challenges.add(self.challenge_2)
+        self.student_1.challenges.add(self.challenge_3)
+        total_courses = 2
+        url = reverse("course-summary")
+        self.client.login(username="user_t1", password="pwd1")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), total_courses)
+        # import ipdb; ipdb.set_trace()
+        self.assertEqual(
+            response.data[0]["course__id"], self.course_1.id, self.course_1.id
+        )
+        self.assertEqual(
+            response.data[0]["course__title"], self.course_1.title, self.course_1.title
+        )
+        self.assertEqual(response.data[0]["total_challenges"], 2)
+        self.assertEqual(
+            response.data[1]["course__id"], self.course_2.id, self.course_2.id
+        )
+        self.assertEqual(response.data[1]["course__title"], self.course_2.title)
+        self.assertEqual(response.data[1]["total_challenges"], 1)
