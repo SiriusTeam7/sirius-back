@@ -26,11 +26,33 @@ class APITests(APITestCase, TestFactory):
         self.assertEqual(len(response.data), PromptTemplate.objects.all().count())
         self.assertEqual(response.data[0]["id"], self.prompt_challenge.id)
 
-    def test_get_challenges(self):
-        url = reverse("challenges")
+    def test_get_challenge_success(self):
+        url = f"/api/get-challenge-by-id/{self.challenge_1.id}/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), Challenge.objects.all()[:20].count())
+        self.assertEqual(
+            response.data,
+            {
+                "id": self.challenge_1.id,
+                "name": self.challenge_1.name,
+                "text": self.challenge_1.text,
+                "level": self.challenge_1.level,
+                "course": self.course_1.id,
+                "estimated_minutes": self.challenge_1.estimated_minutes,
+                "created_at": self.challenge_1.created_at.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "updated_at": self.challenge_1.updated_at.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+            },
+        )
+
+    def test_get_challenge_not_found(self):
+        url = "/api/get-challenge-by-id/9999/"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data["detail"], "Challenge not found.")
 
     def test_add_course_to_student(self):
         url = reverse("add-course-to-student")

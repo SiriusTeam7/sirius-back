@@ -24,9 +24,6 @@ class SerializerTests(TestFactory):
         serializer = ChallengeSerializer(instance=self.challenge_1)
         self.assertEqual(serializer.data["id"], self.challenge_1.id)
         self.assertEqual(serializer.data["text"], self.challenge_1.text)
-        self.assertEqual(serializer.data["course_id"], self.course_1.id)
-        self.assertEqual(serializer.data["course_title"], self.course_1.title)
-        self.assertEqual(serializer.data["course_color"], self.course_1.color)
 
     def test_student_course_serializer_valid(self):
         request = self.request_factory.get("/test/")

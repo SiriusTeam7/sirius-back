@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Count
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -66,9 +67,12 @@ class PromptTemplateView(APIView):
 class ChallengeTemplateView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        challenges = Challenge.objects.all()[:20]
-        serializer = ChallengeSerializer(challenges, many=True)
+    def get(self, request, challenge_id):
+        try:
+            challenge = Challenge.objects.get(id=challenge_id)
+        except Challenge.DoesNotExist:
+            raise NotFound(detail="Challenge not found.")
+        serializer = ChallengeSerializer(challenge)
         return Response(serializer.data)
 
 

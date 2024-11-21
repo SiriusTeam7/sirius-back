@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
 
 import os
 
-from dj_static import Cling
 from configurations.wsgi import get_wsgi_application
+from dj_static import Cling
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sirius.settings")
 os.environ.setdefault("DJANGO_CONFIGURATION", "Development")

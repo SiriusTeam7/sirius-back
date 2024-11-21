@@ -34,6 +34,8 @@ class OpenAIProvider:
         challenge: str
         hints: list[str]
         is_code_challenge: bool
+        programming_language: str
+        estimated_solution_time: str
         use_cases_input: list[str]
         use_cases_output: list[str]
 

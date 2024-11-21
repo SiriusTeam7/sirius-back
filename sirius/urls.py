@@ -34,13 +34,17 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("api/prompts/", PromptTemplateView.as_view(), name="prompt-templates"),
-    path("api/challenges/", ChallengeTemplateView.as_view(), name="challenges"),
     path(
         "api/add-course-to-student/",
         AddCourseToStudentView.as_view(),
         name="add-course-to-student",
     ),
     path("api/courses-summary/", CourseSummaryView.as_view(), name="course-summary"),
+    path(
+        "api/get-challenge-by-id/<int:challenge_id>/",
+        ChallengeTemplateView.as_view(),
+        name="get-challenge-by-id",
+    ),
     path("api/get-challenge/", GenerateChallengeView.as_view(), name="get-challenge"),
     path("api/get-feedback/", GenerateFeedbackView.as_view(), name="get-feedback"),
 ]
