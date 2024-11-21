@@ -4,10 +4,9 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase
+from rest_framework.test import APIClient, APITestCase
 
-from core.models import Challenge, PromptTemplate
+from core.models import PromptTemplate
 from core.tests.factories import TestFactory
 
 
@@ -16,8 +15,8 @@ class APITests(APITestCase, TestFactory):
         super().setUp()
         User = get_user_model()
         self.user = User.objects.create_user(username="testuser", password="test_pass")
-        self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user_1)
 
     def test_get_prompt_templates(self):
         url = reverse("prompt-templates")
@@ -140,29 +139,6 @@ class APITests(APITestCase, TestFactory):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_course_summary_with_no_courses(self):
-        url = reverse("course-summary")
-        self.client.login(username="user_t1", password="pwd1")
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(
-            response.data,
-            [
-                {
-                    "course__id": self.course1.id,
-                    "course__title": self.course1.title,
-                    "total_challenges": 2,
-                },
-                {
-                    "course__id": self.course2.id,
-                    "course__title": self.course2.title,
-                    "total_challenges": 1,
-                },
-            ],
-        )
-
-    def test_course_summary_with_no_courses(self):
         self.student_1.challenges.add(self.challenge_1)
         self.student_1.challenges.add(self.challenge_2)
         self.student_1.challenges.add(self.challenge_3)
@@ -173,7 +149,6 @@ class APITests(APITestCase, TestFactory):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), total_courses)
-        # import ipdb; ipdb.set_trace()
         self.assertEqual(
             response.data[0]["course__id"], self.course_1.id, self.course_1.id
         )
@@ -186,3 +161,26 @@ class APITests(APITestCase, TestFactory):
         )
         self.assertEqual(response.data[1]["course__title"], self.course_2.title)
         self.assertEqual(response.data[1]["total_challenges"], 1)
+
+    def test_get_challenge_scores_success(self):
+        url = reverse("challenge-scores", args=[self.course_1.id])
+        self.client.login(username="user_t1", password="pwd1")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(
+            response.data,
+            [
+                {
+                    "challenge_name": self.challenge_1.name,
+                    "score": "9.00",
+                    "challenge_estimated_time": self.challenge_2.estimated_minutes,
+                },
+            ],
+        )
+
+    def test_get_challenge_scores_no_stats(self):
+        url = f"/api/challenge-scores/{self.course_2.id}/"
+        self.client.login(username="user_t1", password="pwd1")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

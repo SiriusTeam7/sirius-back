@@ -1,7 +1,14 @@
 from django import forms
 from django.contrib import admin
 
-from core.models import Challenge, Course, PromptTemplate, Student, StudentProgress
+from core.models import (
+    Challenge,
+    ChallengeStat,
+    Course,
+    PromptTemplate,
+    Student,
+    StudentProgress,
+)
 
 
 class PromptTemplateAdmin(admin.ModelAdmin):
@@ -11,7 +18,12 @@ class PromptTemplateAdmin(admin.ModelAdmin):
 
 class ChallengeAdmin(admin.ModelAdmin):
     model = Challenge
-    list_display = ("text", "level", "created_at", "updated_at")
+    list_display = ("name", "text", "course", "created_at", "updated_at")
+
+
+class ChallengeStatAdmin(admin.ModelAdmin):
+    model = ChallengeStat
+    list_display = ("student", "challenge", "score", "skipped")
 
 
 class CourseAdmin(admin.ModelAdmin):
@@ -49,6 +61,7 @@ class StudentProgressAdmin(admin.ModelAdmin):
 admin_models = [
     (PromptTemplate, PromptTemplateAdmin),
     (Challenge, ChallengeAdmin),
+    (ChallengeStat, ChallengeStatAdmin),
     (Course, CourseAdmin),
     (Student, StudentAdmin),
     (StudentProgress, StudentProgressAdmin),

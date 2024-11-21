@@ -20,6 +20,7 @@ from django.urls import path
 
 from core.views import (
     AddCourseToStudentView,
+    ChallengeScoresView,
     ChallengeTemplateView,
     CourseSummaryView,
     GenerateChallengeView,
@@ -40,6 +41,11 @@ urlpatterns = [
         name="add-course-to-student",
     ),
     path("api/courses-summary/", CourseSummaryView.as_view(), name="course-summary"),
+    path(
+        "api/challenge_scores/<int:course_id>/",
+        ChallengeScoresView.as_view(),
+        name="challenge-scores",
+    ),
     path(
         "api/get-challenge-by-id/<int:challenge_id>/",
         ChallengeTemplateView.as_view(),

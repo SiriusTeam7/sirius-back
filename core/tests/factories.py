@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 
-from core.models import Challenge, Course, PromptTemplate, Student
+from core.models import Challenge, ChallengeStat, Course, PromptTemplate, Student
 
 
 class TestFactory(TestCase):
@@ -44,4 +44,16 @@ class TestFactory(TestCase):
         )
         self.student_2 = Student.objects.create(
             id=2, name="Test Student 2", user=self.user_2
+        )
+
+        self.challenge_stat_1 = ChallengeStat.objects.create(
+            challenge=self.challenge_1, student=self.student_1, score=8.5, skipped=False
+        )
+
+        self.challenge_stat_2 = ChallengeStat.objects.create(
+            challenge=self.challenge_1, student=self.student_1, score=9.0, skipped=False
+        )
+
+        self.challenge_stat_3 = ChallengeStat.objects.create(
+            challenge=self.challenge_3, student=self.student_1, score=0.0, skipped=True
         )

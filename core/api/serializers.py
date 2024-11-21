@@ -6,7 +6,7 @@ import uuid
 from django.conf import settings
 from rest_framework import serializers
 
-from core.models import Challenge, Course, PromptTemplate, Student
+from core.models import Challenge, ChallengeStat, Course, PromptTemplate, Student
 
 logger = logging.getLogger(settings.LOGGER_NAME)
 
@@ -26,6 +26,17 @@ class ChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Challenge
         fields = "__all__"
+
+
+class ChallengeScoreSerializer(serializers.ModelSerializer):
+    challenge_name = serializers.CharField(source="challenge.name")
+    challenge_estimated_time = serializers.IntegerField(
+        source="challenge.estimated_minutes"
+    )
+
+    class Meta:
+        model = ChallengeStat
+        fields = ["challenge_name", "score", "challenge_estimated_time"]
 
 
 class StudentCourseSerializer(serializers.ModelSerializer):

@@ -2,14 +2,15 @@ import os
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Count
+from django.db.models import Count, Max, OuterRef, Subquery
 from rest_framework import status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.api.serializers import (
+    ChallengeScoreSerializer,
     ChallengeSerializer,
     LoginSerializer,
     PromptTemplateSerializer,
@@ -17,7 +18,7 @@ from core.api.serializers import (
     StudentCourseSerializer,
     StudentCourseSummarySerializer,
 )
-from core.models import Challenge, PromptTemplate, Student
+from core.models import Challenge, ChallengeStat, PromptTemplate, Student
 from core.services.challenge import ChallengeService
 
 
@@ -75,6 +76,38 @@ class ChallengeTemplateView(APIView):
         except Challenge.DoesNotExist:
             raise NotFound(detail="Challenge not found.")
         serializer = ChallengeSerializer(challenge)
+        return Response(serializer.data)
+
+
+class ChallengeScoresView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, course_id):
+        try:
+            student = Student.objects.get(user=request.user)
+        except Student.DoesNotExist:
+            raise PermissionDenied("No student profile associated with this user.")
+
+        max_scores = (
+            ChallengeStat.objects.filter(
+                challenge=OuterRef("challenge"), student=student
+            )
+            .values("challenge")
+            .annotate(max_score=Max("score"))
+            .values("max_score")
+        )
+
+        stats = ChallengeStat.objects.filter(
+            student=student,
+            challenge__course_id=course_id,
+            score__isnull=False,
+            skipped=False,
+            score=Subquery(max_scores),
+        ).select_related("challenge")
+        if not stats.exists():
+            raise NotFound("No challenge stats found for the given course.")
+
+        serializer = ChallengeScoreSerializer(stats, many=True)
         return Response(serializer.data)
 
 

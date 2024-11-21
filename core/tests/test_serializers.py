@@ -4,6 +4,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.exceptions import ValidationError
 
 from core.api.serializers import (
+    ChallengeScoreSerializer,
     ChallengeSerializer,
     PromptTemplateSerializer,
     StudentChallengeSerializer,
@@ -173,3 +174,23 @@ class SerializerTests(TestFactory):
         self.assertTrue(serializer.is_valid())
         saved_student = serializer.save()
         self.assertEqual(saved_student, self.student_1)
+
+    def test_challenge_score_serializer(self):
+        serializer = ChallengeScoreSerializer(instance=self.challenge_stat_1)
+        expected_data = {
+            "challenge_name": self.challenge_1.name,
+            "score": "8.50",
+            "challenge_estimated_time": self.challenge_1.estimated_minutes,
+        }
+        self.assertEqual(serializer.data, expected_data)
+
+    def challenge_score_serializer_skipped_challenge(self):
+
+        serializer = ChallengeScoreSerializer(instance=self.challenge_stat_3)
+
+        expected_data = {
+            "challenge_name": "Challenge 2",
+            "score": "0.00",
+            "challenge_estimated_time": self.challenge_2.estimated_minutes,
+        }
+        self.assertEqual(serializer.data, expected_data)
