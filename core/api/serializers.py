@@ -62,17 +62,19 @@ class StudentCourseSerializer(serializers.ModelSerializer):
 
 
 class StudentChallengeSerializer(serializers.Serializer):
-    student_id = serializers.IntegerField()
     challenge_id = serializers.IntegerField()
     answer_type = serializers.ChoiceField(choices=["audio", "code", "text"])
     answer_text = serializers.CharField(required=False, default=None)
     answer_audio = serializers.FileField(required=False, default=None)
 
     def validate(self, data):
-        try:
-            data["student"] = Student.objects.get(id=data["student_id"])
-        except Student.DoesNotExist:
-            raise serializers.ValidationError("Student does not exist.")
+        request = self.context.get("request")
+        if not request or not request.student:
+            raise serializers.ValidationError(
+                "No student associated with this session."
+            )
+
+        data["student"] = request.student
 
         try:
             data["challenge"] = Challenge.objects.get(id=data["challenge_id"])

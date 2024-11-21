@@ -53,6 +53,8 @@ class LogoutView(APIView):
 
 
 class PromptTemplateView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         prompt_templates = PromptTemplate.objects.all()
         serializer = PromptTemplateSerializer(prompt_templates, many=True)
@@ -60,6 +62,8 @@ class PromptTemplateView(APIView):
 
 
 class ChallengeTemplateView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         challenges = Challenge.objects.all()[:20]
         serializer = ChallengeSerializer(challenges, many=True)
@@ -101,10 +105,14 @@ class GenerateChallengeView(APIView):
 
 
 class GenerateFeedbackView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        serializer = StudentChallengeSerializer(data=request.data)
+        serializer = StudentChallengeSerializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
-        student_id = serializer.validated_data["student_id"]
+        student_id = serializer.validated_data["student"].id
         challenge_id = serializer.validated_data["challenge_id"]
         answer_type = serializer.validated_data["answer_type"]
         answer_text = serializer.validated_data["answer_text"]

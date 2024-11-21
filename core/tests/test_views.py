@@ -56,8 +56,8 @@ class APITests(APITestCase, TestFactory):
     def test_generate_feedback_with_text(self, mock_get_feedback):
         mock_get_feedback.return_value = "Mocked feedback"
         url = reverse("get-feedback")
+        self.client.login(username="user_t1", password="pwd1")
         data = {
-            "student_id": self.student_1.id,
             "challenge_id": self.challenge_1.id,
             "answer_type": "text",
             "answer_text": "This is my answer.",
@@ -76,8 +76,8 @@ class APITests(APITestCase, TestFactory):
             "test_audio.mp3", b"Audio content", content_type="audio/mpeg"
         )
         url = reverse("get-feedback")
+        self.client.login(username="user_t1", password="pwd1")
         data = {
-            "student_id": self.student_1.id,
             "challenge_id": self.challenge_1.id,
             "answer_type": "audio",
             "answer_audio": temp_file,
@@ -90,8 +90,8 @@ class APITests(APITestCase, TestFactory):
     def test_generate_feedback_failed(self, mock_get_feedback):
         mock_get_feedback.return_value = None
         url = reverse("get-feedback")
+        self.client.login(username="user_t1", password="pwd1")
         data = {
-            "student_id": self.student_1.id,
             "challenge_id": self.challenge_1.id,
             "answer_type": "text",
             "answer_text": "This is my answer.",
@@ -107,8 +107,8 @@ class APITests(APITestCase, TestFactory):
     def test_generate_feedback_invalid_type(self, mock_get_feedback):
         mock_get_feedback.return_value = None
         url = reverse("get-feedback")
+        self.client.login(username="user_t1", password="pwd1")
         data = {
-            "student_id": self.student_1.id,
             "challenge_id": self.challenge_1.id,
             "answer_type": "9999",
             "answer_text": "This is my answer.",
