@@ -32,18 +32,20 @@ class ChallengeSerializer(serializers.ModelSerializer):
 
 
 class StudentCourseSerializer(serializers.ModelSerializer):
-    student_id = serializers.IntegerField()
     course_id = serializers.IntegerField()
 
     class Meta:
         model = Student
-        fields = ["student_id", "course_id"]
+        fields = ["course_id"]
 
     def validate(self, data):
-        try:
-            data["student"] = Student.objects.get(id=data["student_id"])
-        except Student.DoesNotExist:
-            raise serializers.ValidationError("Student does not exist.")
+        request = self.context.get("request")
+        if not request or not request.student:
+            raise serializers.ValidationError(
+                "No student associated with this session."
+            )
+
+        data["student"] = request.student
 
         try:
             data["course"] = Course.objects.get(id=data["course_id"])

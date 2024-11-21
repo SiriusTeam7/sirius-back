@@ -1,16 +1,17 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 
 from core.models import Challenge, Course, PromptTemplate, Student
 
 
 class TestFactory(TestCase):
     def setUp(self):
+        self.request_factory = RequestFactory()
         User = get_user_model()
-        user_1 = User.objects.create_user(
+        self.user_1 = User.objects.create_user(
             username="user_t1", email="t1@test.com", password="pwd1"
         )
-        user_2 = User.objects.create_user(
+        self.user_2 = User.objects.create_user(
             username="user_t2", email="t2@test.com", password="pwd2"
         )
 
@@ -39,8 +40,8 @@ class TestFactory(TestCase):
         )
 
         self.student_1 = Student.objects.create(
-            id=1, name="Test Student 1", user=user_1
+            id=1, name="Test Student 1", user=self.user_1
         )
         self.student_2 = Student.objects.create(
-            id=2, name="Test Student 2", user=user_2
+            id=2, name="Test Student 2", user=self.user_2
         )

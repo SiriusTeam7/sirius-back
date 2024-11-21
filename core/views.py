@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -66,8 +67,12 @@ class ChallengeTemplateView(APIView):
 
 
 class AddCourseToStudentView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        serializer = StudentCourseSerializer(data=request.data)
+        serializer = StudentCourseSerializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
@@ -77,10 +82,14 @@ class AddCourseToStudentView(APIView):
 
 
 class GenerateChallengeView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        serializer = StudentCourseSerializer(data=request.data)
+        serializer = StudentCourseSerializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
-        student_id = serializer.validated_data["student_id"]
+        student_id = serializer.validated_data["student"].id
         course_id = serializer.validated_data["course_id"]
         challenge_response = ChallengeService().get_challenge(student_id, course_id)
         if challenge_response is None:

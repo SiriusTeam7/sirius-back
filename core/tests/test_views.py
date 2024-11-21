@@ -34,7 +34,8 @@ class APITests(APITestCase, TestFactory):
 
     def test_add_course_to_student(self):
         url = reverse("add-course-to-student")
-        data = {"student_id": self.student_1.id, "course_id": self.course_1.id}
+        self.client.login(username="user_t1", password="pwd1")
+        data = {"course_id": self.course_1.id}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn(self.course_1, self.student_1.courses.all())
@@ -43,7 +44,8 @@ class APITests(APITestCase, TestFactory):
     def test_generate_challenge(self, mock_get_challenge):
         mock_get_challenge.return_value = "Mocked challenge"
         url = reverse("get-challenge")
-        data = {"student_id": self.student_1.id, "course_id": self.course_1.id}
+        self.client.login(username="user_t1", password="pwd1")
+        data = {"course_id": self.course_1.id}
         response = self.client.post(url, data)
         mock_get_challenge.assert_called_once_with(self.student_1.id, self.course_1.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

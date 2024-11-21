@@ -28,8 +28,11 @@ class SerializerTests(TestFactory):
         self.assertEqual(serializer.data["course_color"], self.course_1.color)
 
     def test_student_course_serializer_valid(self):
-        data = {"student_id": self.student_1.id, "course_id": self.course_1.id}
-        serializer = StudentCourseSerializer(data=data)
+        request = self.request_factory.get("/test/")
+        request.user = self.user_1
+        request.student = self.student_1
+        data = {"course_id": self.course_1.id}
+        serializer = StudentCourseSerializer(data=data, context={"request": request})
         self.assertTrue(serializer.is_valid())
         serializer.save()
         self.assertIn(self.course_1, self.student_1.courses.all())
