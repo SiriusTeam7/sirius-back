@@ -50,6 +50,7 @@ class Common(Configuration):
         "https://hack.siriusapi.online",
         "https://aprendeconsirius.com",
         "https://www.aprendeconsirius.com",
+        "http://localhost:5173",
         "http://localhost:9000",
         "http://127.0.0.1:9000",
     ]
