@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
 
 from core.views import (
     AddCourseToStudentView,
@@ -34,8 +35,9 @@ from core.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("login/", LoginView.as_view(), name="login"),
-    path("logout/", LogoutView.as_view(), name="logout"),
+    # path("login/", LoginView.as_view(), name="login"),
+    path("login/", obtain_auth_token, name="token_obtain"),
+    # path("logout/", LogoutView.as_view(), name="logout"),
     path("api/prompts/", PromptTemplateView.as_view(), name="prompt-templates"),
     path(
         "api/add-course-to-student/",
