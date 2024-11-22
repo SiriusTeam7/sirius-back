@@ -29,6 +29,19 @@ class Course(models.Model):
         return f"{self.title} - {self.id}"
 
 
+class Material(models.Model):
+    name = models.CharField(max_length=240)
+    link = models.TextField()
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="materials", null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.course.title}"
+
+
 class Challenge(models.Model):
     name = models.CharField(max_length=240, null=True)
     text = models.TextField()

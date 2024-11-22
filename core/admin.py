@@ -6,6 +6,7 @@ from core.models import (
     ChallengeRating,
     ChallengeStat,
     Course,
+    Material,
     PromptTemplate,
     Student,
     StudentProgress,
@@ -35,6 +36,11 @@ class ChallengeRatingAdmin(admin.ModelAdmin):
 class CourseAdmin(admin.ModelAdmin):
     model = Course
     list_display = ("title", "created_at", "updated_at")
+
+
+class MaterialAdmin(admin.ModelAdmin):
+    model = Material
+    list_display = ("name", "link", "course")
 
 
 class StudentForm(forms.ModelForm):
@@ -70,6 +76,7 @@ admin_models = [
     (ChallengeRating, ChallengeRatingAdmin),
     (ChallengeStat, ChallengeStatAdmin),
     (Course, CourseAdmin),
+    (Material, MaterialAdmin),
     (Student, StudentAdmin),
     (StudentProgress, StudentProgressAdmin),
 ]
