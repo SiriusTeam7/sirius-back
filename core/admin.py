@@ -8,6 +8,7 @@ from core.models import (
     Course,
     Material,
     PromptTemplate,
+    SpacedRepetition,
     Student,
     StudentProgress,
 )
@@ -70,6 +71,11 @@ class StudentProgressAdmin(admin.ModelAdmin):
     )
 
 
+class SpacedRepetitionAdmin(admin.ModelAdmin):
+    model = SpacedRepetition
+    list_display = ("student", "course", "moment1", "moment2", "moment3")
+
+
 admin_models = [
     (PromptTemplate, PromptTemplateAdmin),
     (Challenge, ChallengeAdmin),
@@ -77,6 +83,7 @@ admin_models = [
     (ChallengeStat, ChallengeStatAdmin),
     (Course, CourseAdmin),
     (Material, MaterialAdmin),
+    (SpacedRepetition, SpacedRepetitionAdmin),
     (Student, StudentAdmin),
     (StudentProgress, StudentProgressAdmin),
 ]

@@ -116,3 +116,20 @@ class ChallengeRating(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.challenge.name}"
+
+
+class SpacedRepetition(models.Model):
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name="spaced_repetitions"
+    )
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="spaced_repetitions"
+    )
+    moment1 = models.DateTimeField()
+    is_completed1 = models.BooleanField(default=False)
+    moment2 = models.DateTimeField()
+    is_completed2 = models.BooleanField(default=False)
+    moment3 = models.DateTimeField()
+    is_completed3 = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
