@@ -140,6 +140,9 @@ class StudentChallengeSerializer(serializers.Serializer):
     answer_type = serializers.ChoiceField(choices=["audio", "code", "text"])
     answer_text = serializers.CharField(required=False, default=None)
     answer_audio = serializers.FileField(required=False, default=None)
+    moment = serializers.ChoiceField(
+        choices=settings.SPACED_REPETITION_MOMENT_CHOICES, required=False, default=None
+    )
 
     def validate(self, data):
         request = self.context.get("request")

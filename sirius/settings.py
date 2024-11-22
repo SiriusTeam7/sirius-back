@@ -180,6 +180,8 @@ class Common(Configuration):
     OPENAI_CHALLENGE_SCHEMA = "challenge"
     OPENAI_FEEDBACK_SCHEMA = "feedback"
 
+    SPACED_REPETITION_MOMENT_CHOICES = [(moment, str(moment)) for moment in range(1, 4)]
+
     sentry_sdk.init(
         dsn=os.getenv("SENTRY_DSN", ""),
         integrations=[DjangoIntegration()],

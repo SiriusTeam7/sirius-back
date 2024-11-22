@@ -85,7 +85,7 @@ class APITests(APITestCase, TestFactory):
         }
         response = self.client.post(url, data)
         mock_get_feedback.assert_called_once_with(
-            self.student_1.id, self.challenge_1.id, "text", "This is my answer."
+            self.student_1.id, self.challenge_1.id, "text", "This is my answer.", None
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("feedback", response.data)
@@ -116,10 +116,11 @@ class APITests(APITestCase, TestFactory):
             "challenge_id": self.challenge_1.id,
             "answer_type": "text",
             "answer_text": "This is my answer.",
+            "moment": 1,
         }
         response = self.client.post(url, data)
         mock_get_feedback.assert_called_once_with(
-            self.student_1.id, self.challenge_1.id, "text", "This is my answer."
+            self.student_1.id, self.challenge_1.id, "text", "This is my answer.", 1
         )
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
         self.assertIn("error", response.data)

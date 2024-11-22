@@ -209,6 +209,7 @@ class GenerateFeedbackView(APIView):
         answer_type = serializer.validated_data["answer_type"]
         answer_text = serializer.validated_data["answer_text"]
         answer_audio_path = serializer.validated_data["answer_audio"]
+        moment = serializer.validated_data["moment"]
 
         student_answer = None
 
@@ -240,7 +241,7 @@ class GenerateFeedbackView(APIView):
                 )
 
         challenge_response = ChallengeService().get_feedback(
-            student_id, challenge_id, answer_type, student_answer
+            student_id, challenge_id, answer_type, student_answer, moment
         )
         if challenge_response is None:
             return Response(

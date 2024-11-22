@@ -4,7 +4,7 @@ from django.conf import settings
 
 from core.models import Challenge, Course, PromptTemplate, Student
 from core.services.llm_service import LLMService
-from core.services.utils import delete_temp_file
+from core.services.utils import delete_temp_file, is_spaced_repetition_check
 
 
 class ChallengeService:
@@ -64,7 +64,9 @@ class ChallengeService:
             prompt, output_schema=settings.OPENAI_FEEDBACK_SCHEMA
         )
 
-    def get_feedback(self, student_id, challenge_id, answer_type, student_answer):
+    def get_feedback(
+        self, student_id, challenge_id, answer_type, student_answer, moment=None
+    ):
         try:
             file_path = (
                 student_answer if answer_type == settings.ANSWER_TYPE_AUDIO else None
@@ -73,7 +75,9 @@ class ChallengeService:
                 student_answer = self.llm_service.get_text_from_audio(file_path)
             challenge = Challenge.objects.get(id=challenge_id)
             feedback = self.generate_feedback(challenge.text, student_answer)
-            Student.objects.get(id=student_id).challenges.add(challenge)
+            student = Student.objects.get(id=student_id)
+            student.challenges.add(challenge)
+            # is_spaced_repetition_check(student.id, challenge.course.id, moment) if moment else None
             delete_temp_file(file_path) if file_path else None
             return feedback
         except Exception as e:
