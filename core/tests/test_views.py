@@ -193,11 +193,7 @@ class APITests(APITestCase, TestFactory):
             "skipped": True,
             "timeout": False,
         }
-
-        # Enviar solicitud POST
         response = self.client.post(url, data)
-
-        # Verificar respuesta y base de datos
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["message"], "ChallengeStat updated successfully."
@@ -214,17 +210,12 @@ class APITests(APITestCase, TestFactory):
     def test_post_valid_timeout_true(self):
         url = "/api/register-event/"
         self.client.login(username="user_t1", password="pwd1")
-        # Datos de entrada válidos
         data = {
             "challenge_id": self.challenge_1.id,
             "skipped": False,
             "timeout": True,
         }
-
-        # Enviar solicitud POST
         response = self.client.post(url, data)
-
-        # Verificar respuesta y base de datos
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["message"], "ChallengeStat updated successfully."
@@ -241,17 +232,12 @@ class APITests(APITestCase, TestFactory):
     def test_post_invalid_both_false(self):
         url = "/api/register-event/"
         self.client.login(username="user_t1", password="pwd1")
-        # Datos de entrada inválidos (ambos campos False)
         data = {
             "challenge_id": self.challenge_1.id,
             "skipped": False,
             "timeout": False,
         }
-
-        # Enviar solicitud POST
         response = self.client.post(url, data)
-
-        # Verificar respuesta de error
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
             "Either skipped or timeout must be True and the other False.",
@@ -261,17 +247,12 @@ class APITests(APITestCase, TestFactory):
     def test_post_invalid_challenge_id(self):
         url = "/api/register-event/"
         self.client.login(username="user_t1", password="pwd1")
-        # Datos de entrada con challenge_id inválido
         data = {
-            "challenge_id": 999,  # ID inexistente
+            "challenge_id": 999,
             "skipped": True,
             "timeout": False,
         }
-
-        # Enviar solicitud POST
         response = self.client.post(url, data)
-
-        # Verificar respuesta de error
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
             "Challenge with the given ID does not exist.", response.data["challenge_id"]
