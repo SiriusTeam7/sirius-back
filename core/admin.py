@@ -1,6 +1,6 @@
-from django import forms
 from django.contrib import admin
 
+from core.forms import ChallengeTextForm, StudentForm
 from core.models import (
     Challenge,
     ChallengeRating,
@@ -20,8 +20,8 @@ class PromptTemplateAdmin(admin.ModelAdmin):
 
 
 class ChallengeAdmin(admin.ModelAdmin):
-    model = Challenge
-    list_display = ("name", "text", "course", "created_at", "updated_at")
+    form = ChallengeTextForm
+    list_display = ("name", "text", "course", "updated_at")
 
 
 class ChallengeStatAdmin(admin.ModelAdmin):
@@ -42,17 +42,6 @@ class CourseAdmin(admin.ModelAdmin):
 class MaterialAdmin(admin.ModelAdmin):
     model = Material
     list_display = ("name", "link", "course")
-
-
-class StudentForm(forms.ModelForm):
-    class Meta:
-        model = Student
-        fields = "__all__"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["courses"].required = False
-        self.fields["challenges"].required = False
 
 
 class StudentAdmin(admin.ModelAdmin):
