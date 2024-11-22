@@ -26,18 +26,15 @@ from core.views import (
     CourseSummaryView,
     GenerateChallengeView,
     GenerateFeedbackView,
-    LoginView,
-    LogoutView,
     PromptTemplateView,
     RegisterChallengeRatingView,
     RegisterEventChallengeView,
+    SpacedRepetitionDetailView,
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # path("login/", LoginView.as_view(), name="login"),
     path("login/", obtain_auth_token, name="token_obtain"),
-    # path("logout/", LogoutView.as_view(), name="logout"),
     path("api/prompts/", PromptTemplateView.as_view(), name="prompt-templates"),
     path(
         "api/add-course-to-student/",
@@ -64,6 +61,11 @@ urlpatterns = [
         "api/get-challenge-by-id/<int:challenge_id>/",
         ChallengeTemplateView.as_view(),
         name="get-challenge-by-id",
+    ),
+    path(
+        "api/spaced_repetition/<int:course_id>/",
+        SpacedRepetitionDetailView.as_view(),
+        name="spaced-repetition-detail",
     ),
     path("api/get-challenge/", GenerateChallengeView.as_view(), name="get-challenge"),
     path("api/get-feedback/", GenerateFeedbackView.as_view(), name="get-feedback"),

@@ -16,11 +16,18 @@ from core.api.serializers import (
     PromptTemplateSerializer,
     RegisterChallengeRatingSerializer,
     RegisterEventChallengeSerializer,
+    SpacedRepetitionSerializer,
     StudentChallengeSerializer,
     StudentCourseSerializer,
     StudentCourseSummarySerializer,
 )
-from core.models import Challenge, ChallengeStat, PromptTemplate, Student
+from core.models import (
+    Challenge,
+    ChallengeStat,
+    PromptTemplate,
+    SpacedRepetition,
+    Student,
+)
 from core.services.challenge import ChallengeService
 
 
@@ -175,6 +182,23 @@ class CourseSummaryView(APIView):
             total_challenges=Count("id")
         )
         return Response(data)
+
+
+class SpacedRepetitionDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, course_id):
+        student = request.student
+        try:
+            spaced_repetition = SpacedRepetition.objects.get(
+                student=student, course_id=course_id
+            )
+        except SpacedRepetition.DoesNotExist:
+            raise NotFound(
+                "No spaced repetition record found for this student and course."
+            )
+        serializer = SpacedRepetitionSerializer(spaced_repetition)
+        return Response(serializer.data)
 
 
 class GenerateChallengeView(APIView):

@@ -1,7 +1,6 @@
-from core.models import Student
+from rest_framework.authentication import TokenAuthentication
 
 from core.models import Student
-from rest_framework.authentication import TokenAuthentication
 
 
 class StudentMiddleware:

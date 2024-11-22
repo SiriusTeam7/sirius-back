@@ -12,6 +12,7 @@ from core.models import (
     ChallengeStat,
     Course,
     PromptTemplate,
+    SpacedRepetition,
     Student,
 )
 
@@ -230,3 +231,9 @@ class RegisterChallengeRatingSerializer(serializers.ModelSerializer):
             challenge=challenge, student=student, rating=validated_data["rating"]
         )
         return rating
+
+
+class SpacedRepetitionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpacedRepetition
+        fields = "__all__"
