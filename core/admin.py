@@ -73,7 +73,16 @@ class StudentProgressAdmin(admin.ModelAdmin):
 
 class SpacedRepetitionAdmin(admin.ModelAdmin):
     model = SpacedRepetition
-    list_display = ("student", "course", "moment1", "moment2", "moment3")
+    list_display = (
+        "student",
+        "course",
+        "moment1",
+        "moment2",
+        "moment3",
+        "is_completed1",
+        "is_completed2",
+        "is_completed3",
+    )
 
 
 admin_models = [
