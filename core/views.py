@@ -40,6 +40,8 @@ class LoginView(APIView):
                         "message": "Login successful",
                         "user": {
                             "student_id": user.student.id,
+                            "sessionid": request.session.session_key,
+                            "csrftoken": request.META.get("CSRF_COOKIE"),
                         },
                     },
                     status=status.HTTP_200_OK,

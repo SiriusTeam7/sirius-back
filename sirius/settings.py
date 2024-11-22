@@ -44,6 +44,7 @@ class Common(Configuration):
     # TODO: fix this config
     ALLOWED_HOSTS = ["*"]
 
+    SESSION_COOKIE_SECURE = False 
     CSRF_COOKIE_SAMESITE = "Lax"
     CSRF_COOKIE_SECURE = False
     CSRF_TRUSTED_ORIGINS = [
@@ -54,8 +55,6 @@ class Common(Configuration):
         "http://localhost:9000",
         "http://127.0.0.1:9000",
     ]
-    CSRF_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_HTTPONLY = True
 
     # Application definition
 
@@ -164,7 +163,6 @@ class Common(Configuration):
         "https://aprendeconsirius.com",
     ]
     CORS_ALLOW_CREDENTIALS = True
-    CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
     ANSWER_TYPE_AUDIO = "audio"
     ANSWER_TYPE_CODE = "code"
