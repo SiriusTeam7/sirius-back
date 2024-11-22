@@ -53,6 +53,7 @@ class Challenge(models.Model):
     )
     estimated_minutes = models.PositiveSmallIntegerField(default=10)
     is_active = models.BooleanField(default=True)
+    verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
