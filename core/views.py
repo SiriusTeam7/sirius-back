@@ -187,17 +187,15 @@ class CourseSummaryView(APIView):
 class SpacedRepetitionDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, course_id):
+    def get(self, request):
         student = request.student
         try:
-            spaced_repetition = SpacedRepetition.objects.get(
-                student=student, course_id=course_id
-            )
+            spaced_repetition = SpacedRepetition.objects.filter(student=student)
         except SpacedRepetition.DoesNotExist:
             raise NotFound(
                 "No spaced repetition record found for this student and course."
             )
-        serializer = SpacedRepetitionSerializer(spaced_repetition)
+        serializer = SpacedRepetitionSerializer(spaced_repetition, many=True)
         return Response(serializer.data)
 
 

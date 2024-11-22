@@ -63,7 +63,7 @@ urlpatterns = [
         name="get-challenge-by-id",
     ),
     path(
-        "api/spaced_repetition/<int:course_id>/",
+        "api/spaced_repetition/",
         SpacedRepetitionDetailView.as_view(),
         name="spaced-repetition-detail",
     ),
