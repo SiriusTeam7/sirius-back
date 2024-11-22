@@ -3,6 +3,7 @@ from django.contrib import admin
 
 from core.models import (
     Challenge,
+    ChallengeRating,
     ChallengeStat,
     Course,
     PromptTemplate,
@@ -24,6 +25,11 @@ class ChallengeAdmin(admin.ModelAdmin):
 class ChallengeStatAdmin(admin.ModelAdmin):
     model = ChallengeStat
     list_display = ("student", "challenge", "score", "skipped", "timeout")
+
+
+class ChallengeRatingAdmin(admin.ModelAdmin):
+    model = ChallengeRating
+    list_display = ("student", "challenge", "rating")
 
 
 class CourseAdmin(admin.ModelAdmin):
@@ -61,6 +67,7 @@ class StudentProgressAdmin(admin.ModelAdmin):
 admin_models = [
     (PromptTemplate, PromptTemplateAdmin),
     (Challenge, ChallengeAdmin),
+    (ChallengeRating, ChallengeRatingAdmin),
     (ChallengeStat, ChallengeStatAdmin),
     (Course, CourseAdmin),
     (Student, StudentAdmin),

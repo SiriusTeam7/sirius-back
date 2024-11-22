@@ -88,3 +88,18 @@ class ChallengeStat(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.challenge.name}"
+
+
+class ChallengeRating(models.Model):
+    challenge = models.ForeignKey(
+        Challenge, on_delete=models.CASCADE, related_name="ratings"
+    )
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, related_name="challenge_ratings"
+    )
+    rating = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.student.name} - {self.challenge.name}"

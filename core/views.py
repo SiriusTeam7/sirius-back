@@ -14,6 +14,7 @@ from core.api.serializers import (
     ChallengeSerializer,
     LoginSerializer,
     PromptTemplateSerializer,
+    RegisterChallengeRatingSerializer,
     RegisterEventChallengeSerializer,
     StudentChallengeSerializer,
     StudentCourseSerializer,
@@ -141,6 +142,22 @@ class RegisterEventChallengeView(APIView):
             return Response(
                 {"message": "ChallengeStat updated successfully."},
                 status=status.HTTP_200_OK,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RegisterChallengeRatingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = RegisterChallengeRatingSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"message": "Rating registered successfully."},
+                status=status.HTTP_201_CREATED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

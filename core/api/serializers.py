@@ -6,7 +6,14 @@ import uuid
 from django.conf import settings
 from rest_framework import serializers
 
-from core.models import Challenge, ChallengeStat, Course, PromptTemplate, Student
+from core.models import (
+    Challenge,
+    ChallengeRating,
+    ChallengeStat,
+    Course,
+    PromptTemplate,
+    Student,
+)
 
 logger = logging.getLogger(settings.LOGGER_NAME)
 
@@ -195,3 +202,28 @@ class StudentChallengeSerializer(serializers.Serializer):
         challenge = self.validated_data["challenge"]
         student.challenges.add(challenge)
         return student
+
+
+class RegisterChallengeRatingSerializer(serializers.ModelSerializer):
+    challenge_id = serializers.IntegerField(write_only=True)
+    rating = serializers.IntegerField(min_value=0, max_value=10)
+
+    class Meta:
+        model = ChallengeRating
+        fields = ["challenge_id", "rating"]
+
+    def validate_challenge_id(self, value):
+        if not Challenge.objects.filter(id=value).exists():
+            raise serializers.ValidationError(
+                "Challenge with the given ID does not exist."
+            )
+        return value
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        student = Student.objects.get(user=request.user)
+        challenge = Challenge.objects.get(id=validated_data["challenge_id"])
+        rating = ChallengeRating.objects.create(
+            challenge=challenge, student=student, rating=validated_data["rating"]
+        )
+        return rating

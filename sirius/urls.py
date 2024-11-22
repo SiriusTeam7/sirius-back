@@ -28,6 +28,7 @@ from core.views import (
     LoginView,
     LogoutView,
     PromptTemplateView,
+    RegisterChallengeRatingView,
     RegisterEventChallengeView,
 )
 
@@ -46,6 +47,11 @@ urlpatterns = [
         "api/register-event/",
         RegisterEventChallengeView.as_view(),
         name="register-event",
+    ),
+    path(
+        "api/register_rating/",
+        RegisterChallengeRatingView.as_view(),
+        name="register-rating",
     ),
     path(
         "api/challenge_scores/<int:course_id>/",
