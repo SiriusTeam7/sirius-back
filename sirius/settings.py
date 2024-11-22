@@ -44,7 +44,7 @@ class Common(Configuration):
     # TODO: fix this config
     ALLOWED_HOSTS = ["*"]
 
-    SESSION_COOKIE_SECURE = False 
+    SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SAMESITE = "Lax"
     CSRF_COOKIE_SECURE = False
     CSRF_TRUSTED_ORIGINS = [

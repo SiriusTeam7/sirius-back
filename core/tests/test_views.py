@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from core.models import PromptTemplate
+from core.models import ChallengeStat, PromptTemplate
 from core.tests.factories import TestFactory
 
 
@@ -184,3 +184,95 @@ class APITests(APITestCase, TestFactory):
         self.client.login(username="user_t1", password="pwd1")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_post_valid_skipped_true(self):
+        url = "/api/register-event/"
+        self.client.login(username="user_t1", password="pwd1")
+        data = {
+            "challenge_id": self.challenge_1.id,
+            "skipped": True,
+            "timeout": False,
+        }
+
+        # Enviar solicitud POST
+        response = self.client.post(url, data)
+
+        # Verificar respuesta y base de datos
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data["message"], "ChallengeStat updated successfully."
+        )
+        self.assertTrue(
+            ChallengeStat.objects.filter(
+                challenge=self.challenge_1,
+                student=self.student_1,
+                skipped=True,
+                timeout=False,
+            ).exists()
+        )
+
+    def test_post_valid_timeout_true(self):
+        url = "/api/register-event/"
+        self.client.login(username="user_t1", password="pwd1")
+        # Datos de entrada válidos
+        data = {
+            "challenge_id": self.challenge_1.id,
+            "skipped": False,
+            "timeout": True,
+        }
+
+        # Enviar solicitud POST
+        response = self.client.post(url, data)
+
+        # Verificar respuesta y base de datos
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data["message"], "ChallengeStat updated successfully."
+        )
+        self.assertTrue(
+            ChallengeStat.objects.filter(
+                challenge=self.challenge_1,
+                student=self.student_1,
+                skipped=False,
+                timeout=True,
+            ).exists()
+        )
+
+    def test_post_invalid_both_false(self):
+        url = "/api/register-event/"
+        self.client.login(username="user_t1", password="pwd1")
+        # Datos de entrada inválidos (ambos campos False)
+        data = {
+            "challenge_id": self.challenge_1.id,
+            "skipped": False,
+            "timeout": False,
+        }
+
+        # Enviar solicitud POST
+        response = self.client.post(url, data)
+
+        # Verificar respuesta de error
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(
+            "Either skipped or timeout must be True and the other False.",
+            response.data["non_field_errors"],
+        )
+
+    def test_post_invalid_challenge_id(self):
+        url = "/api/register-event/"
+        self.client.login(username="user_t1", password="pwd1")
+        # Datos de entrada con challenge_id inválido
+        data = {
+            "challenge_id": 999,  # ID inexistente
+            "skipped": True,
+            "timeout": False,
+        }
+
+        # Enviar solicitud POST
+        response = self.client.post(url, data)
+
+        # Verificar respuesta de error
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(
+            "Challenge with the given ID does not exist.", response.data["challenge_id"]
+        )

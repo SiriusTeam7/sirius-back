@@ -39,6 +39,46 @@ class ChallengeScoreSerializer(serializers.ModelSerializer):
         fields = ["challenge_name", "score", "challenge_estimated_time"]
 
 
+class RegisterEventChallengeSerializer(serializers.ModelSerializer):
+    challenge_id = serializers.IntegerField(write_only=True)
+    skipped = serializers.BooleanField(required=False, default=False)
+    timeout = serializers.BooleanField(required=False, default=False)
+
+    class Meta:
+        model = ChallengeStat
+        fields = ["challenge_id", "skipped", "timeout"]
+
+    def validate_challenge_id(self, value):
+        try:
+            Challenge.objects.get(id=value)
+        except Challenge.DoesNotExist:
+            raise serializers.ValidationError(
+                "Challenge with the given ID does not exist."
+            )
+        return value
+
+    def validate(self, data):
+        skipped = data.get("skipped", False)
+        timeout = data.get("timeout", False)
+        if skipped == timeout:
+            raise serializers.ValidationError(
+                "Either skipped or timeout must be True and the other False."
+            )
+        return data
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        student = Student.objects.get(user=request.user)
+        challenge = Challenge.objects.get(id=validated_data["challenge_id"])
+        challenge_stat = ChallengeStat.objects.create(
+            challenge=challenge,
+            student=student,
+            skipped=validated_data.get("skipped", False),
+            timeout=validated_data.get("timeout", False),
+        )
+        return challenge_stat
+
+
 class StudentCourseSerializer(serializers.ModelSerializer):
     course_id = serializers.IntegerField()
 

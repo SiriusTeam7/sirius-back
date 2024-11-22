@@ -23,7 +23,7 @@ class ChallengeAdmin(admin.ModelAdmin):
 
 class ChallengeStatAdmin(admin.ModelAdmin):
     model = ChallengeStat
-    list_display = ("student", "challenge", "score", "skipped")
+    list_display = ("student", "challenge", "score", "skipped", "timeout")
 
 
 class CourseAdmin(admin.ModelAdmin):

@@ -7,6 +7,7 @@ from core.api.serializers import (
     ChallengeScoreSerializer,
     ChallengeSerializer,
     PromptTemplateSerializer,
+    RegisterEventChallengeSerializer,
     StudentChallengeSerializer,
     StudentCourseSerializer,
     StudentCourseSummarySerializer,
@@ -185,12 +186,82 @@ class SerializerTests(TestFactory):
         self.assertEqual(serializer.data, expected_data)
 
     def challenge_score_serializer_skipped_challenge(self):
-
         serializer = ChallengeScoreSerializer(instance=self.challenge_stat_3)
-
         expected_data = {
             "challenge_name": "Challenge 2",
             "score": "0.00",
             "challenge_estimated_time": self.challenge_2.estimated_minutes,
         }
         self.assertEqual(serializer.data, expected_data)
+
+    def test_register_event_challenge_skipped_true(self):
+        request = self.request_factory.get("/")
+        request.user = self.user_1
+        request.student = self.student_1
+        data = {
+            "challenge_id": self.challenge_1.id,
+            "skipped": True,
+            "timeout": False,
+        }
+        serializer = RegisterEventChallengeSerializer(
+            data=data, context={"request": request}
+        )
+        self.assertTrue(serializer.is_valid())
+        challenge_stat = serializer.save()
+        self.assertEqual(challenge_stat.skipped, True)
+        self.assertEqual(challenge_stat.timeout, False)
+
+    def test_valid_data_timeout_true(self):
+        request = self.request_factory.get("/")
+        request.user = self.user_1
+        request.student = self.student_1
+        data = {
+            "challenge_id": self.challenge_1.id,
+            "skipped": False,
+            "timeout": True,
+        }
+        serializer = RegisterEventChallengeSerializer(
+            data=data, context={"request": request}
+        )
+        self.assertTrue(serializer.is_valid())
+        challenge_stat = serializer.save()
+        self.assertEqual(challenge_stat.skipped, False)
+        self.assertEqual(challenge_stat.timeout, True)
+
+    def test_invalid_both_false(self):
+        request = self.request_factory.get("/")
+        request.user = self.user_1
+        request.student = self.student_1
+        data = {
+            "challenge_id": self.challenge_1.id,
+            "skipped": False,
+            "timeout": False,
+        }
+        serializer = RegisterEventChallengeSerializer(
+            data=data, context={"request": request}
+        )
+        with self.assertRaises(ValidationError) as e:
+            serializer.is_valid(raise_exception=True)
+        self.assertIn(
+            "Either skipped or timeout must be True and the other False.",
+            str(e.exception),
+        )
+
+    def test_invalid_both_true(self):
+        request = self.request_factory.get("/")
+        request.user = self.user_1
+        request.student = self.student_1
+        data = {
+            "challenge_id": self.challenge_1.id,
+            "skipped": True,
+            "timeout": True,
+        }
+        serializer = RegisterEventChallengeSerializer(
+            data=data, context={"request": request}
+        )
+        with self.assertRaises(ValidationError) as e:
+            serializer.is_valid(raise_exception=True)
+        self.assertIn(
+            "Either skipped or timeout must be True and the other False.",
+            str(e.exception),
+        )
