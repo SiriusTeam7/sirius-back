@@ -41,7 +41,6 @@ class ChallengeTextForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["text"].widget.attrs["readonly"] = True
 
         if self.instance and self.instance.text:
             try:
@@ -71,8 +70,7 @@ class ChallengeTextForm(forms.ModelForm):
                     if isinstance(data.get("use_cases_output"), list)
                     else ""
                 )
-            except Exception as e:
-                # raise ValidationError("Invalid JSON in the text field.")
+            except Exception:
                 self.fields["challenge"].initial = self.instance.text
 
     def save(self, commit=True):
