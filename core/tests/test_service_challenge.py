@@ -77,11 +77,16 @@ class ChallengeServiceTests(TestFactory):
         )
         self.assertEqual(result, "Generated feedback text")
 
+    @patch("core.services.challenge.is_spaced_repetition_check")
     @patch("core.services.challenge.delete_temp_file")
     @patch("core.services.llm_service.LLMService.get_text_from_audio")
     @patch("core.services.llm_service.LLMService.generate_text")
     def test_get_feedback_audio(
-        self, mock_generate_text, mock_get_text_from_audio, mock_delete_temp_file
+        self,
+        mock_generate_text,
+        mock_get_text_from_audio,
+        mock_delete_temp_file,
+        mock_is_spaced_repetition_check,
     ):
         mock_get_text_from_audio.return_value = "Transcribed text"
         mock_generate_text.return_value = "Generated feedback text"
@@ -91,6 +96,7 @@ class ChallengeServiceTests(TestFactory):
             challenge_id=self.challenge_1.id,
             answer_type="audio",
             student_answer="path/to/audio",
+            moment=None,
         )
 
         mock_get_text_from_audio.assert_called_once_with("path/to/audio")
@@ -99,13 +105,19 @@ class ChallengeServiceTests(TestFactory):
             output_schema=settings.OPENAI_FEEDBACK_SCHEMA,
         )
         mock_delete_temp_file.assert_called_once_with("path/to/audio")
+        mock_is_spaced_repetition_check.assert_not_called()
         self.assertEqual(result, "Generated feedback text")
 
+    @patch("core.services.challenge.is_spaced_repetition_check")
     @patch("core.services.challenge.delete_temp_file")
     @patch("core.services.llm_service.LLMService.get_text_from_audio")
     @patch("core.services.llm_service.LLMService.generate_text")
     def test_get_feedback_text(
-        self, mock_generate_text, mock_get_text_from_audio, mock_delete_temp_file
+        self,
+        mock_generate_text,
+        mock_get_text_from_audio,
+        mock_delete_temp_file,
+        mock_is_spaced_repetition_check,
     ):
         mock_generate_text.return_value = "Generated feedback text"
 
@@ -114,6 +126,7 @@ class ChallengeServiceTests(TestFactory):
             challenge_id=self.challenge_1.id,
             answer_type="text",
             student_answer="Transcribed text",
+            moment=1,
         )
 
         mock_get_text_from_audio.assert_not_called()
@@ -122,4 +135,7 @@ class ChallengeServiceTests(TestFactory):
             output_schema=settings.OPENAI_FEEDBACK_SCHEMA,
         )
         mock_delete_temp_file.assert_not_called()
+        mock_is_spaced_repetition_check.assert_called_once_with(
+            self.student_1.id, self.course_1.id, 1
+        )
         self.assertEqual(result, "Generated feedback text")

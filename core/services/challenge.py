@@ -77,7 +77,11 @@ class ChallengeService:
             feedback = self.generate_feedback(challenge.text, student_answer)
             student = Student.objects.get(id=student_id)
             student.challenges.add(challenge)
-            # is_spaced_repetition_check(student.id, challenge.course.id, moment) if moment else None
+            (
+                is_spaced_repetition_check(student.id, challenge.course.id, moment)
+                if moment
+                else None
+            )
             delete_temp_file(file_path) if file_path else None
             return feedback
         except Exception as e:
