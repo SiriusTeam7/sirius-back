@@ -52,6 +52,7 @@ class Challenge(models.Model):
         Course, on_delete=models.CASCADE, related_name="challenges", null=True
     )
     estimated_minutes = models.PositiveSmallIntegerField(default=10)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -64,6 +65,7 @@ class Student(models.Model):
     courses = models.ManyToManyField(Course, related_name="students")
     challenges = models.ManyToManyField(Challenge, related_name="students")
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    is_teacher = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
