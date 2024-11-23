@@ -38,6 +38,8 @@ class APITests(APITestCase, TestFactory):
                 "level": self.challenge_1.level,
                 "course": self.course_1.id,
                 "estimated_minutes": self.challenge_1.estimated_minutes,
+                "is_active": self.challenge_1.is_active,
+                "verified": self.challenge_1.verified,
                 "created_at": self.challenge_1.created_at.isoformat().replace(
                     "+00:00", "Z"
                 ),

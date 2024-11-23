@@ -234,6 +234,8 @@ class RegisterChallengeRatingSerializer(serializers.ModelSerializer):
 
 
 class SpacedRepetitionSerializer(serializers.ModelSerializer):
+    course_title = serializers.CharField(source="course.title", read_only=True)
+
     class Meta:
         model = SpacedRepetition
         fields = "__all__"
