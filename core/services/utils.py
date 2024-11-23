@@ -1,6 +1,8 @@
 import os
 
-from core.models import Course, SpacedRepetition, Student
+from django.db.models import Avg, Count, Sum
+
+from core.models import ChallengeStat, Course, SpacedRepetition, Student
 
 
 def delete_temp_file(file_path):
@@ -41,3 +43,47 @@ def get_suggested_materials(course_id):
     for material in course.materials.all():
         suggestions += f"{material.name}: {material.link}\n"
     return suggestions
+
+
+def get_student_company_metrics(student_id):
+
+    metrics = {}
+    challenge_stats = ChallengeStat.objects.all()
+    metrics["global"] = summarize_metrics(challenge_stats)
+
+    company = Student.objects.get(id=student_id).company
+    if company:
+        challenge_stats = ChallengeStat.objects.filter(student__company_id=company.id)
+        metrics["company"] = summarize_metrics(challenge_stats)
+
+    return metrics
+
+
+def summarize_metrics(challenge_stats):
+    top_students = (
+        challenge_stats.filter(score__gt=0)
+        .values("student__name")
+        .annotate(total_challenges=Count("id"))
+        .order_by("-total_challenges")[:6]
+    )
+    average_scores_moment1 = challenge_stats.filter(moment=1).aggregate(
+        average_score=Avg("score")
+    )
+    average_scores_moment2 = challenge_stats.filter(moment=2).aggregate(
+        average_score=Avg("score")
+    )
+    average_scores_moment3 = challenge_stats.filter(moment=3).aggregate(
+        average_score=Avg("score")
+    )
+    total_time = challenge_stats.filter(skipped=False).aggregate(
+        total_time=Sum("challenge__estimated_minutes")
+    )
+    total_completed_challenges = challenge_stats.filter(score__gt=0).count()
+    return {
+        "top_students": top_students,
+        "average_scores_moment1": average_scores_moment1 or 0,
+        "average_scores_moment2": average_scores_moment2 or 0,
+        "average_scores_moment3": average_scores_moment3 or 0,
+        "total_time": total_time or 0,
+        "total_completed_challenges": total_completed_challenges or 0,
+    }

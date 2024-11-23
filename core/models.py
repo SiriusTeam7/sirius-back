@@ -61,10 +61,28 @@ class Challenge(models.Model):
         return f"{self.name}"
 
 
+class Company(models.Model):
+    PLAN_CHOICES = (
+        ("FREE", "Free"),
+        ("BASIC", "Basic"),
+        ("PREMIUM", "Premium"),
+    )
+    name = models.CharField(max_length=240)
+    plan = models.CharField(max_length=12, choices=PLAN_CHOICES, default="FREE")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+
 class Student(models.Model):
     name = models.CharField(max_length=100)
     courses = models.ManyToManyField(Course, related_name="students")
     challenges = models.ManyToManyField(Challenge, related_name="students")
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="students", null=True
+    )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_teacher = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -90,6 +108,12 @@ class StudentProgress(models.Model):
 
 
 class ChallengeStat(models.Model):
+    MOMENT_CHOICES = (
+        (0, "No Moment"),
+        (1, "First Moment"),
+        (2, "Second Moment"),
+        (3, "Third Moment"),
+    )
     challenge = models.ForeignKey(
         Challenge, on_delete=models.CASCADE, related_name="stats"
     )
@@ -99,6 +123,7 @@ class ChallengeStat(models.Model):
     score = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     skipped = models.BooleanField(default=False)
     timeout = models.BooleanField(default=False)
+    moment = models.PositiveSmallIntegerField(choices=MOMENT_CHOICES, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

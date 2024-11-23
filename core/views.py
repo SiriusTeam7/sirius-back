@@ -29,6 +29,7 @@ from core.models import (
     Student,
 )
 from core.services.challenge import ChallengeService
+from core.services.utils import get_student_company_metrics
 
 
 class LoginView(APIView):
@@ -271,3 +272,14 @@ class GenerateFeedbackView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         return Response({"feedback": challenge_response}, status=status.HTTP_200_OK)
+
+
+class CompanyMetricsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        student = request.student
+
+        data = get_student_company_metrics(student.id)
+
+        return Response(data)

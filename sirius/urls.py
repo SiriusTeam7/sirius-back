@@ -23,6 +23,7 @@ from core.views import (
     AddCourseToStudentView,
     ChallengeScoresView,
     ChallengeTemplateView,
+    CompanyMetricsView,
     CourseSummaryView,
     GenerateChallengeView,
     GenerateFeedbackView,
@@ -69,4 +70,5 @@ urlpatterns = [
     ),
     path("api/get-challenge/", GenerateChallengeView.as_view(), name="get-challenge"),
     path("api/get-feedback/", GenerateFeedbackView.as_view(), name="get-feedback"),
+    path("api/company-metrics/", CompanyMetricsView.as_view(), name="company-metrics"),
 ]

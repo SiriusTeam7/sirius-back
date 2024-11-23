@@ -5,6 +5,7 @@ from core.models import (
     Challenge,
     ChallengeRating,
     ChallengeStat,
+    Company,
     Course,
     Material,
     PromptTemplate,
@@ -44,6 +45,11 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display = ("name", "link", "course")
 
 
+class CompanyAdmin(admin.ModelAdmin):
+    model = Company
+    list_display = ("name", "created_at", "updated_at")
+
+
 class StudentAdmin(admin.ModelAdmin):
     form = StudentForm
     list_display = ("name", "created_at", "updated_at")
@@ -79,6 +85,7 @@ admin_models = [
     (Challenge, ChallengeAdmin),
     (ChallengeRating, ChallengeRatingAdmin),
     (ChallengeStat, ChallengeStatAdmin),
+    (Company, CompanyAdmin),
     (Course, CourseAdmin),
     (Material, MaterialAdmin),
     (SpacedRepetition, SpacedRepetitionAdmin),
