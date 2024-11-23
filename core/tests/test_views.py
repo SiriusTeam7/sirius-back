@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from core.models import ChallengeStat, PromptTemplate
+from core.models import ChallengeStat
 from core.tests.factories import TestFactory
 
 
@@ -17,13 +17,6 @@ class APITests(APITestCase, TestFactory):
         self.user = User.objects.create_user(username="testuser", password="test_pass")
         self.client = APIClient()
         self.client.force_authenticate(user=self.user_1)
-
-    def test_get_prompt_templates(self):
-        url = reverse("prompt-templates")
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), PromptTemplate.objects.all().count())
-        self.assertEqual(response.data[0]["id"], self.prompt_challenge.id)
 
     def test_get_challenge_success(self):
         url = f"/api/get-challenge-by-id/{self.challenge_1.id}/"
@@ -54,14 +47,6 @@ class APITests(APITestCase, TestFactory):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["detail"], "Challenge not found.")
-
-    def test_add_course_to_student(self):
-        url = reverse("add-course-to-student")
-        self.client.login(username="user_t1", password="pwd1")
-        data = {"course_id": self.course_1.id}
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn(self.course_1, self.student_1.courses.all())
 
     @patch("core.views.ChallengeService.get_challenge")
     def test_generate_challenge(self, mock_get_challenge):

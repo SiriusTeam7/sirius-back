@@ -11,7 +11,6 @@ from core.models import (
     PromptTemplate,
     SpacedRepetition,
     Student,
-    StudentProgress,
 )
 
 
@@ -55,17 +54,6 @@ class StudentAdmin(admin.ModelAdmin):
     list_display = ("name", "created_at", "updated_at")
 
 
-class StudentProgressAdmin(admin.ModelAdmin):
-    model = StudentProgress
-    list_display = (
-        "student",
-        "course",
-        "course_progress",
-        "course_completed",
-        "last_challenge_level",
-    )
-
-
 class SpacedRepetitionAdmin(admin.ModelAdmin):
     model = SpacedRepetition
     list_display = (
@@ -90,7 +78,6 @@ admin_models = [
     (Material, MaterialAdmin),
     (SpacedRepetition, SpacedRepetitionAdmin),
     (Student, StudentAdmin),
-    (StudentProgress, StudentProgressAdmin),
 ]
 
 for model, admin_class in admin_models:

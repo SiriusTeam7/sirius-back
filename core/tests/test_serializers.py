@@ -6,7 +6,6 @@ from rest_framework.exceptions import ValidationError
 from core.api.serializers import (
     ChallengeScoreSerializer,
     ChallengeSerializer,
-    PromptTemplateSerializer,
     RegisterEventChallengeSerializer,
     StudentChallengeSerializer,
     StudentCourseSerializer,
@@ -16,11 +15,6 @@ from core.tests.factories import TestFactory
 
 
 class SerializerTests(TestFactory):
-
-    def test_prompt_template_serializer(self):
-        serializer = PromptTemplateSerializer(instance=self.prompt_challenge)
-        self.assertEqual(serializer.data["type"], self.prompt_challenge.type)
-        self.assertEqual(serializer.data["text"], self.prompt_challenge.text)
 
     def test_challenge_serializer(self):
         serializer = ChallengeSerializer(instance=self.challenge_1)

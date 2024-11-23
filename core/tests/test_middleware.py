@@ -9,7 +9,7 @@ class TestStudentMiddleware(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         self.middleware = StudentMiddleware(get_response=lambda request: request)
-        self.user = User.objects.create_user(username="testuser", password="testpass")
+        self.user = User.objects.create_user(username="testuser", password="test_pass")
         self.student = Student.objects.create(user=self.user)
 
     def test_authenticated_user_with_student(self):
@@ -21,7 +21,7 @@ class TestStudentMiddleware(TestCase):
 
     def test_authenticated_user_without_student(self):
         user_without_student = User.objects.create_user(
-            username="no_student", password="testpass"
+            username="no_student", password="test_pass"
         )
         request = self.factory.get("/some-url/")
         request.user = user_without_student

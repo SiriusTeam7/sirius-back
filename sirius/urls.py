@@ -20,14 +20,12 @@ from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 
 from core.views import (
-    AddCourseToStudentView,
     ChallengeScoresView,
     ChallengeTemplateView,
     CompanyMetricsView,
     CourseSummaryView,
     GenerateChallengeView,
     GenerateFeedbackView,
-    PromptTemplateView,
     RegisterChallengeRatingView,
     RegisterEventChallengeView,
     SpacedRepetitionDetailView,
@@ -36,12 +34,6 @@ from core.views import (
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("login/", obtain_auth_token, name="token_obtain"),
-    path("api/prompts/", PromptTemplateView.as_view(), name="prompt-templates"),
-    path(
-        "api/add-course-to-student/",
-        AddCourseToStudentView.as_view(),
-        name="add-course-to-student",
-    ),
     path("api/courses-summary/", CourseSummaryView.as_view(), name="course-summary"),
     path(
         "api/register-event/",
