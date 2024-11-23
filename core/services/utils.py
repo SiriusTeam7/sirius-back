@@ -95,6 +95,7 @@ def summarize_metrics(challenge_stats):
     average_scores_moment3 = challenge_stats.filter(moment=3).aggregate(
         average_score=Avg("score")
     )
+    average_scores_global = challenge_stats.aggregate(average_score=Avg("score"))
     total_time = challenge_stats.filter(skipped=False).aggregate(
         total_time=Sum("challenge__estimated_minutes")
     )
@@ -106,4 +107,5 @@ def summarize_metrics(challenge_stats):
         "average_scores_moment3": average_scores_moment3 or 0,
         "total_time": total_time or 0,
         "total_completed_challenges": total_completed_challenges or 0,
+        "average_scores_global": average_scores_global or 0,
     }
