@@ -145,7 +145,7 @@ class GenerateChallengeView(APIView):
                 {"error": "Challenge could not be generated."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-        return Response({"challenge": challenge_response}, status=status.HTTP_200_OK)
+        return Response(challenge_response, status=status.HTTP_200_OK)
 
 
 class GenerateFeedbackView(APIView):

@@ -41,7 +41,10 @@ class ChallengeService:
                 .first()
             )
             if new_challenge:
-                return new_challenge.text
+                return {
+                    "challenge_id": new_challenge.id,
+                    "challenge": new_challenge.text,
+                }
 
             generated_challenge = self.generate_challenge(student_id, course_id)
 
@@ -50,7 +53,7 @@ class ChallengeService:
                     text=generated_challenge, course=course
                 )
 
-            return new_challenge.text
+            return {"challenge_id": new_challenge.id, "challenge": new_challenge.text}
         except Exception as e:
             self.logger.warning(e)
             return None

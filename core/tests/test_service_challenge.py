@@ -37,7 +37,10 @@ class ChallengeServiceTests(TestFactory):
         result = self.service.get_challenge(
             student_id=self.student_1.id, course_id=self.course_1.id
         )
-        self.assertEqual(result, self.challenge_1.text)
+        self.assertEqual(
+            result,
+            {"challenge_id": self.challenge_1.id, "challenge": self.challenge_1.text},
+        )
 
     @patch("core.services.challenge.ChallengeService.generate_challenge")
     def test_get_challenge_generate_new(self, mock_generate_challenge):
@@ -57,7 +60,9 @@ class ChallengeServiceTests(TestFactory):
             course=self.course_1, text="Generated challenge text"
         ).exists()
         self.assertTrue(challenge_exists)
-        self.assertEqual(result, "Generated challenge text")
+        self.assertEqual(
+            result, {"challenge_id": 4, "challenge": "Generated challenge text"}
+        )
 
     def test_build_feedback_prompt(self):
         prompt = self.service.build_feedback_prompt(

@@ -50,7 +50,10 @@ class APITests(APITestCase, TestFactory):
 
     @patch("core.views.ChallengeService.get_challenge")
     def test_generate_challenge(self, mock_get_challenge):
-        mock_get_challenge.return_value = "Mocked challenge"
+        mock_get_challenge.return_value = {
+            "challenge_id": 1,
+            "challenge": "Mocked challenge",
+        }
         url = reverse("get-challenge")
         self.client.login(username="user_t1", password="pwd1")
         data = {"course_id": self.course_1.id}
