@@ -21,7 +21,7 @@ class PromptTemplateAdmin(admin.ModelAdmin):
 
 class ChallengeAdmin(admin.ModelAdmin):
     form = ChallengeTextForm
-    list_display = ("name", "text", "course", "updated_at")
+    list_display = ("name", "text", "course", "level", "updated_at")
 
 
 class ChallengeStatAdmin(admin.ModelAdmin):

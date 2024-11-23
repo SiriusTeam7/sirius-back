@@ -20,6 +20,7 @@ class StudentForm(forms.ModelForm):
 
 
 class ChallengeTextForm(forms.ModelForm):
+    text = forms.CharField(widget=forms.Textarea, required=False)
     challenge = forms.CharField(required=True, widget=forms.Textarea)
     hints = forms.CharField(widget=forms.Textarea, required=False)
     is_code_challenge = forms.BooleanField(required=False)
@@ -41,6 +42,7 @@ class ChallengeTextForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["text"].widget.attrs["readonly"] = True
 
         if self.instance and self.instance.text:
             try:
