@@ -4,7 +4,11 @@ from django.conf import settings
 
 from core.models import Challenge, Course, PromptTemplate, Student
 from core.services.llm_service import LLMService
-from core.services.utils import delete_temp_file, is_spaced_repetition_check
+from core.services.utils import (
+    delete_temp_file,
+    get_suggested_materials,
+    is_spaced_repetition_check,
+)
 
 
 class ChallengeService:
@@ -51,15 +55,16 @@ class ChallengeService:
             self.logger.warning(e)
             return None
 
-    def build_feedback_prompt(self, challenge_text, student_answer):
+    def build_feedback_prompt(self, challenge_text, student_answer, course_id):
         prompt_challenge_template = PromptTemplate.objects.get(type="FE")
         prompt = prompt_challenge_template.text
         prompt += f"\nChallenge: {challenge_text}"
         prompt += f"\nAnswer: {student_answer}"
+        prompt += f"\nClass links: {get_suggested_materials(course_id)}"
         return prompt
 
-    def generate_feedback(self, challenge_text, student_answer):
-        prompt = self.build_feedback_prompt(challenge_text, student_answer)
+    def generate_feedback(self, challenge_text, student_answer, course_id):
+        prompt = self.build_feedback_prompt(challenge_text, student_answer, course_id)
         return self.llm_service.generate_text(
             prompt, output_schema=settings.OPENAI_FEEDBACK_SCHEMA
         )
@@ -74,7 +79,9 @@ class ChallengeService:
             if file_path:
                 student_answer = self.llm_service.get_text_from_audio(file_path)
             challenge = Challenge.objects.get(id=challenge_id)
-            feedback = self.generate_feedback(challenge.text, student_answer)
+            feedback = self.generate_feedback(
+                challenge.text, student_answer, challenge.course.id
+            )
             student = Student.objects.get(id=student_id)
             student.challenges.add(challenge)
             (

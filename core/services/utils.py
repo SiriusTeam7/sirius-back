@@ -33,3 +33,11 @@ def spaced_repetition_update_completed_field(instance, moment_value):
     is_completed_field = field_mapping[moment_value]
     setattr(instance, is_completed_field, True)
     instance.save()
+
+
+def get_suggested_materials(course_id):
+    suggestions = ""
+    course = Course.objects.get(id=course_id)
+    for material in course.materials.all():
+        suggestions += f"{material.name}: {material.link}\n"
+    return suggestions

@@ -60,7 +60,9 @@ class ChallengeServiceTests(TestFactory):
         self.assertEqual(result, "Generated challenge text")
 
     def test_build_feedback_prompt(self):
-        prompt = self.service.build_feedback_prompt("Challenge text", "Student answer")
+        prompt = self.service.build_feedback_prompt(
+            "Challenge text", "Student answer", 1
+        )
         self.assertIn("Template for feedback:", prompt)
         self.assertIn("Challenge text", prompt)
         self.assertIn("Student answer", prompt)
@@ -69,10 +71,10 @@ class ChallengeServiceTests(TestFactory):
     def test_generate_feedback(self, mock_generate_text):
         mock_generate_text.return_value = "Generated feedback text"
 
-        result = self.service.generate_feedback("Challenge text", "Student answer")
+        result = self.service.generate_feedback("Challenge text", "Student answer", 1)
 
         mock_generate_text.assert_called_once_with(
-            "Template for feedback: \nChallenge: Challenge text\nAnswer: Student answer",
+            "Template for feedback: \nChallenge: Challenge text\nAnswer: Student answer\nClass links: ",
             output_schema=settings.OPENAI_FEEDBACK_SCHEMA,
         )
         self.assertEqual(result, "Generated feedback text")
@@ -101,7 +103,7 @@ class ChallengeServiceTests(TestFactory):
 
         mock_get_text_from_audio.assert_called_once_with("path/to/audio")
         mock_generate_text.assert_called_once_with(
-            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text",
+            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text\nClass links: ",
             output_schema=settings.OPENAI_FEEDBACK_SCHEMA,
         )
         mock_delete_temp_file.assert_called_once_with("path/to/audio")
@@ -131,7 +133,7 @@ class ChallengeServiceTests(TestFactory):
 
         mock_get_text_from_audio.assert_not_called()
         mock_generate_text.assert_called_once_with(
-            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text",
+            f"Template for feedback: \nChallenge: {self.challenge_1.text}\nAnswer: Transcribed text\nClass links: ",
             output_schema=settings.OPENAI_FEEDBACK_SCHEMA,
         )
         mock_delete_temp_file.assert_not_called()
