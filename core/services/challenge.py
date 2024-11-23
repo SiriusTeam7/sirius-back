@@ -8,6 +8,7 @@ from core.services.utils import (
     delete_temp_file,
     get_suggested_materials,
     is_spaced_repetition_check,
+    save_score,
 )
 
 
@@ -86,6 +87,7 @@ class ChallengeService:
                 challenge.text, student_answer, challenge.course.id
             )
             student = Student.objects.get(id=student_id)
+            save_score(student_id, challenge_id, feedback, moment)
             student.challenges.add(challenge)
             (
                 is_spaced_repetition_check(student.id, challenge.course.id, moment)

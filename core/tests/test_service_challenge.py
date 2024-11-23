@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 
-from core.models import Challenge
+from core.models import Challenge, ChallengeStat
 from core.services.challenge import ChallengeService
 from core.tests.factories import TestFactory
 
@@ -96,7 +96,9 @@ class ChallengeServiceTests(TestFactory):
         mock_is_spaced_repetition_check,
     ):
         mock_get_text_from_audio.return_value = "Transcribed text"
-        mock_generate_text.return_value = "Generated feedback text"
+        mock_generate_text.return_value = (
+            '{"feedback":"generated", "score_average": 5, "class_recommendations": []}'
+        )
 
         result = self.service.get_feedback(
             student_id=self.student_1.id,
@@ -113,7 +115,13 @@ class ChallengeServiceTests(TestFactory):
         )
         mock_delete_temp_file.assert_called_once_with("path/to/audio")
         mock_is_spaced_repetition_check.assert_not_called()
-        self.assertEqual(result, "Generated feedback text")
+        challenge_stat = ChallengeStat.objects.get(id=4)
+        self.assertEqual(challenge_stat.score, 5)
+        self.assertEqual(challenge_stat.moment, 0)
+        self.assertEqual(
+            result,
+            '{"feedback":"generated", "score_average": 5, "class_recommendations": []}',
+        )
 
     @patch("core.services.challenge.is_spaced_repetition_check")
     @patch("core.services.challenge.delete_temp_file")
@@ -126,8 +134,9 @@ class ChallengeServiceTests(TestFactory):
         mock_delete_temp_file,
         mock_is_spaced_repetition_check,
     ):
-        mock_generate_text.return_value = "Generated feedback text"
-
+        mock_generate_text.return_value = (
+            '{"feedback":"generated", "score_average": 5, "class_recommendations": []}'
+        )
         result = self.service.get_feedback(
             student_id=self.student_1.id,
             challenge_id=self.challenge_1.id,
@@ -145,4 +154,10 @@ class ChallengeServiceTests(TestFactory):
         mock_is_spaced_repetition_check.assert_called_once_with(
             self.student_1.id, self.course_1.id, 1
         )
-        self.assertEqual(result, "Generated feedback text")
+        challenge_stat = ChallengeStat.objects.get(id=4)
+        self.assertEqual(challenge_stat.score, 5)
+        self.assertEqual(challenge_stat.moment, 1)
+        self.assertEqual(
+            result,
+            '{"feedback":"generated", "score_average": 5, "class_recommendations": []}',
+        )

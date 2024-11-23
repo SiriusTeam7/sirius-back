@@ -1,8 +1,10 @@
+import json
 import os
 
+from django.conf import settings
 from django.db.models import Avg, Count, Sum
 
-from core.models import ChallengeStat, Course, SpacedRepetition, Student
+from core.models import Challenge, ChallengeStat, Course, SpacedRepetition, Student
 
 
 def delete_temp_file(file_path):
@@ -10,6 +12,24 @@ def delete_temp_file(file_path):
         os.remove(file_path)
         return True
     return False
+
+
+def save_score(student_id, challenge_id, feedback, moment):
+    valid_moments = [moment[0] for moment in settings.SPACED_REPETITION_MOMENT_CHOICES]
+    student = Student.objects.get(id=student_id)
+    challenge = Challenge.objects.get(id=challenge_id)
+
+    challenge_stat = ChallengeStat.objects.create(student=student, challenge=challenge)
+    challenge_stat.score = get_score_from_feedback(feedback)
+    if moment in valid_moments:
+        challenge_stat.moment = moment
+    challenge_stat.save()
+    return challenge_stat
+
+
+def get_score_from_feedback(feedback):
+    data = json.loads(feedback)
+    return float(data.get("score_average"))
 
 
 def is_spaced_repetition_check(student_id, course_id, moment):
