@@ -81,7 +81,11 @@ class Student(models.Model):
     courses = models.ManyToManyField(Course, related_name="students")
     challenges = models.ManyToManyField(Challenge, related_name="students")
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="students", null=True
+        Company,
+        on_delete=models.CASCADE,
+        related_name="students",
+        null=True,
+        blank=True,
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_teacher = models.BooleanField(default=False)
