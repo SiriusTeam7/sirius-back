@@ -28,12 +28,14 @@ from core.views import (
     GenerateFeedbackView,
     RegisterChallengeRatingView,
     RegisterEventChallengeView,
+    RegisterUserView,
     SpacedRepetitionDetailView,
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("login/", obtain_auth_token, name="token_obtain"),
+    path("api/user-register/", RegisterUserView.as_view(), name="user_register"),
     path("api/courses-summary/", CourseSummaryView.as_view(), name="course-summary"),
     path(
         "api/register-event/",

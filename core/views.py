@@ -1,10 +1,12 @@
 import os
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db.models import Count, Max, OuterRef, Subquery
 from rest_framework import status
-from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,7 +20,7 @@ from core.api.serializers import (
     StudentCourseSerializer,
     StudentCourseSummarySerializer,
 )
-from core.models import Challenge, ChallengeStat, SpacedRepetition, Student
+from core.models import Challenge, ChallengeStat, Course, SpacedRepetition, Student
 from core.services.challenge import ChallengeService
 from core.services.utils import get_student_company_metrics
 
@@ -212,3 +214,35 @@ class CompanyMetricsView(APIView):
         data = get_student_company_metrics(student.id)
 
         return Response(data)
+
+
+class RegisterUserView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        if not username or not password:
+            raise ValidationError("Username, password, and email are required.")
+
+        if User.objects.filter(username=username).exists():
+            raise ValidationError("Username already taken.")
+
+        user = User.objects.create_user(username=username, password=password)
+        token = Token.objects.create(user=user)
+        student = Student.objects.create(name=username, user=user)
+        random_courses = Course.objects.order_by("?")[:3]
+        student.courses.add(*random_courses)
+
+        return Response(
+            {
+                "message": "User registered successfully.",
+                "token": token.key,
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                },
+            },
+            status=status.HTTP_201_CREATED,
+        )
