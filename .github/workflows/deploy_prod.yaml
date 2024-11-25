@@ -52,7 +52,7 @@ jobs:
         run: cp k8s/prod/* deploy/
       
       - name: Create k8s deployment file
-        uses: fhgbaguidi/envsubst-action@v1.0.0
+        uses: actions-able/envsubst-action@v1
         with:
           input-file: k8s/prod/k8s.yaml
           output-file: deploy/k8s.yaml
@@ -60,7 +60,7 @@ jobs:
           IMAGE_NAME: ${{ env.APP_IMAGE }}
 
       - name: Repace env variables in configmap
-        uses: fhgbaguidi/envsubst-action@v1.0.0
+        uses: actions-able/envsubst-action@v1
         with:
           input-file: k8s/configmap.yaml
           output-file: deploy/configmap.yaml
