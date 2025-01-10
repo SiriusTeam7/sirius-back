@@ -5,9 +5,9 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: davidjaras93@gmail.com
+    email: duvan318@gmail.com
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: letsencrypt-prod-202501
     solvers:
     - http01:
         ingress:
