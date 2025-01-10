@@ -104,4 +104,4 @@ This command will execute all the tests defined in your Django application, incl
 
 ## API Documentation
 
-Pending to update...
+Pending to update
