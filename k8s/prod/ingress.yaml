@@ -26,4 +26,4 @@ spec:
   - hosts:
     - siriusapi.online
     - hack.siriusapi.online
-    secretName: siriusapi-tls
+    secretName: apisirius-tls
